@@ -1,0 +1,168 @@
+# Resume content — single source of truth.
+# Edit this file, then run: python3 build.py
+# Outputs land in variants/
+
+person:
+  name: "Shinto C V"
+  email: "cshintov@gmail.com"
+  phone: "+91 80896 76207"
+  github_url: "https://github.com/cshintov"
+  github_label: "github.com/cshintov"
+  linkedin_url: "https://www.linkedin.com/in/shinto-cv/"
+  linkedin_label: "linkedin/shinto-cv"
+  location: "Kerala, India — remote"
+  cka_url: "https://ti-user-certificates.s3.amazonaws.com/e0df7fbf-a057-42af-8a1f-590912be5460/80b43799-ddd1-58e2-9177-0a7fa5898d0b-shinto-c-v-e5f8e9cc-c843-46bb-aa3b-5152d126384c-certificate.pdf"
+
+# Two framings — choose at build time per shell.
+# Most experience content is shared; only the bits that differ live under framings.
+framings:
+  blockchain:
+    title_short: "Senior Platform Engineer"
+    title_line2: "Blockchain RPC Infrastructure"
+    title_full: "Senior Platform Engineer · Blockchain RPC Infrastructure"
+    summary: >
+      Platform engineer running production blockchain RPC at <strong>Tatum</strong> — EVM and
+      UTXO chain fleets across two GCP regions and OVH bare-metal, glued by Terraform, ArgoCD,
+      Consul, and Envoy Gateway. Comfortable from L7 routing down to ZFS snapshots and
+      chain-client tuning.
+    metrics:
+      - { n: "8+",      l: "Years infra" }
+      - { n: "50+",     l: "Chain fleets" }
+      - { n: "GCP·AWS", l: "+ bare-metal" }
+    tech_stack_tail:
+      - cat: "Blockchain"
+        items: ["EVM (Erigon/Geth/Bor)", "BTC", "Solana", "BSC", "Polygon", "Cosmos"]
+    domain_note: null
+
+  platform:
+    title_short: "Senior Platform / SRE Engineer"
+    title_line2: "Multi-region Kubernetes & GitOps"
+    title_full: "Senior Platform / SRE Engineer · Multi-region Kubernetes & GitOps"
+    summary: >
+      Platform engineer running production infrastructure at <strong>Tatum</strong> — 50+
+      stateful workloads across two GCP regions plus OVH bare-metal, GitOps end-to-end.
+      Comfortable from L7 routing down to storage-layer recovery and stateful upgrades.
+    metrics:
+      - { n: "8+",      l: "Years infra" }
+      - { n: "GCP·AWS", l: "+ bare-metal" }
+    tech_stack_tail:
+      - cat: "Storage"
+        items: ["ZFS snapshots", "GCP PD / CSI", "stateful upgrade workflows"]
+    domain_note: >
+      Blockchain infrastructure — EVM (Erigon, Geth, Bor), Bitcoin, Solana, BSC, Polygon,
+      Cosmos. The skills above generalize; the substrate happens to be chains.
+
+# Shared tech stack rows (appear in all framings). Tail rows come from framing.tech_stack_tail.
+tech_stack_common:
+  - { cat: "Cloud",          items: ["GCP", "AWS", "OVH bare-metal"] }
+  - { cat: "Orchestration",  items: ["Kubernetes", "Nomad", "Docker"] }
+  - { cat: "IaC / GitOps",   items: ["Terraform", "Ansible", "ArgoCD", "Helm", "Kustomize"] }
+  - { cat: "Routing",        items: ["Envoy Gateway", "nginx", "Consul", "GCP Global LB"] }
+  - { cat: "Observability",  items: ["Prometheus", "Grafana", "Loki", "SLOs"] }
+  - { cat: "CI",             items: ["GitLab CI", "Jenkins (JCasC)", "GitHub Actions"] }
+  - { cat: "Languages",      items: ["Python", "Bash", "Go", "Groovy"] }
+
+# Experience entries — most recent first. Fields whose value is a dict {blockchain, platform}
+# resolve per framing at render time.
+experience:
+  - id: tatum
+    title: "Cloud Platform Engineer"
+    org: "Tatum.io"
+    org_byline: "Blockchain-as-a-Service"
+    date_iso: "2022-06 → present"
+    date_terse: "2022 — now"
+    date_compact: "2022.06 → now"
+    intro:
+      blockchain: "Co-owner of the chain RPC infrastructure surface — node fleets, routing, observability, GitOps."
+      platform: "Co-owner of the production infrastructure surface — workload orchestration, ingress, observability, GitOps."
+    bullets:
+      - tag: scale
+        text:
+          blockchain: "Operate 50+ blockchain node fleets — Polygon, Ethereum, Bitcoin, Solana, BSC, Cosmos — across GKE in two GCP regions and OVH bare-metal via Ansible/Docker."
+          platform: "Operate 50+ stateful workloads across GKE in two GCP regions and OVH bare-metal via Ansible/Docker."
+        ctx:
+          platform: "Domain: blockchain RPC nodes — EVM and UTXO families."
+      - tag: routing
+        text: "Contributed to migration of platform-API and chain-RPC admission from nginx-Lua to Envoy Gateway (Gateway API HTTPRoute + SecurityPolicy + extAuth), preserving SLO budget through cutover."
+      - tag: gitops
+        text: "Authored progressive multi-region rollout patterns on ArgoCD ApplicationSets (RollingSync, ignoreDifferences, branch retargeting) and the runbooks for their failure modes."
+      - tag: discovery
+        text:
+          blockchain: "Designed Consul-based unified service discovery across K8s, Nomad, and bare-metal — 60 members, 200+ RPC/WS endpoints."
+          platform: "Designed Consul-based unified service discovery across K8s + Nomad + bare-metal — 60 members, 200+ service endpoints."
+      - tag: tools
+        text:
+          blockchain: "Built the internal tooling layer: vitals snapshot CLI, dashboards-as-code workflow, ZFS-snapshot rollback for chain upgrades, MR-review knowledge base."
+          platform: "Built the internal tooling layer: vitals snapshot CLI, dashboards-as-code workflow, snapshot-based rollback for stateful upgrades, MR-review knowledge base."
+
+  - id: bluehr
+    title: "Senior DevOps Engineer"
+    org: "BlueEHR"
+    org_byline: "Healthcare EHR"
+    date_iso: "2021-02 → 2022-05"
+    date_terse: "2021 — 2022"
+    date_compact: "2021.02 → 2022.05"
+    intro: "Sole DevOps engineer. Took the platform from no-CI-no-monitoring to a working IaC and observability foundation. AWS-native stack."
+    bullets:
+      - { tag: "ci/cd", text: "HA Jenkins on Kubernetes via JCasC; Gitflow, peer review, and IaC introduced as engineering practice." }
+      - { tag: o11y,    text: "Prometheus + Grafana + Loki — first real observability the team had." }
+
+  - id: freelance_2020
+    title: "Software / Infrastructure Engineer"
+    org: "Freelance"
+    org_byline: "short-term engagements"
+    date_iso: "2020-01 → 2021-02"
+    date_terse: "2020 — 2021"
+    date_compact: "2020.01 → 2021.02"
+    intro: "Short-term contract engagements across cloud and DevOps work — exploratory period between full-time roles."
+    bullets: []
+
+  - id: infracloud
+    title: "DevOps Engineer"
+    org: "InfraCloud Technologies"
+    org_byline: "Consulting"
+    date_iso: "2019-07 → 2020-01"
+    date_terse: "2019 — 2020"
+    date_compact: "2019.07 → 2020.01"
+    intro: null
+    bullets:
+      - { tag: chaos, text: "Resiliency testing with chaos-toolkit; Consul KV sidecar POC for hot-reload configuration." }
+      - { tag: k8s,   text: "Python tooling against the Kubernetes API for cluster-component health verification on deploy." }
+
+  - id: impelsys_devops
+    title: "DevOps Engineer"
+    org: "Impelsys India"
+    org_byline: null
+    date_iso: "2016-08 → 2019-06"
+    date_terse: "2016 — 2019"
+    date_compact: "2016.08 → 2019.06"
+    intro: "Part of the team introducing DevOps practices org-wide. Jenkins/Groovy, Docker, Kubernetes, AWS, CloudFormation. Owned critical CI/CD migrations end-to-end."
+    bullets: []
+
+  - id: impelsys_swe
+    title: "Software Engineer"
+    org: "Impelsys India"
+    org_byline: null
+    date_iso: "2015-10 → 2016-07"
+    date_terse: "2015 — 2016"
+    date_compact: "2015.10 → 2016.07"
+    intro: "Built <a href=\"https://www.ezmarc.com/\">ezmarc.com</a> with a teammate — a Python/Flask API converting book metadata to MARC records."
+    bullets: []
+
+projects:
+  - { date: "2015",  title: "ezmarc.com", url: "https://www.ezmarc.com/", byline: "Python / Flask / MARC", text: "Co-designed and shipped as a fresher — a Python API converting book metadata into MARC library records." }
+  - { date: "2025—", title: "LLM-assisted internal tooling",        byline: "Claude Code skills, memory systems, ft bookmarks classifier", text: "Custom skills and memory persistence for a working developer; X/Twitter bookmarks classifier (<code>ft</code>) for personal knowledge management." }
+
+# Build targets — (shell, framing) pairs. Output goes to variants/<filename>.
+# Convention: blockchain framing keeps the base name; platform gets -platform suffix.
+targets:
+  - { shell: swiss,             framing: blockchain, out: "swiss.html",                       label: "Swiss" }
+  - { shell: swiss,             framing: platform,   out: "swiss-platform.html",              label: "Swiss" }
+  - { shell: engineering-brief, framing: blockchain, out: "engineering-brief.html",           label: "Engineering Brief" }
+  - { shell: engineering-brief, framing: platform,   out: "engineering-brief-platform.html",  label: "Engineering Brief" }
+
+# Static shells (not yet ported to templates) — still appear in the index switcher.
+static_targets:
+  - { out: "terminal.html",        label: "Terminal",        framing: blockchain }
+  - { out: "editorial.html",       label: "Editorial",       framing: blockchain }
+  - { out: "gradient-modern.html", label: "Gradient Modern", framing: blockchain }

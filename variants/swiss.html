@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Shinto C V</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0a0a; --paper:#fff; --rule:#e8e8e8; --muted:#737373; --red:#e63946;
+    --sans:'Inter','Helvetica Neue',Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.55;font-weight:400}
+  body{max-width:1100px;margin:0 auto;padding:80px 64px 96px}
+  a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink)}
+  a:hover{color:var(--red);border-bottom-color:var(--red)}
+
+  .grid{display:grid;grid-template-columns:240px 1fr;gap:64px}
+  .rail{position:sticky;top:48px;align-self:start}
+  .rail h1{font-size:30px;font-weight:700;letter-spacing:-1px;margin:0 0 4px;line-height:1}
+  .rail .role{font-size:13px;color:var(--muted);font-weight:500;margin-bottom:24px;line-height:1.4}
+  .rail .accent{display:block;width:32px;height:2px;background:var(--red);margin-bottom:24px}
+  .rail .meta{font-size:12.5px;line-height:1.9;color:var(--ink)}
+  .rail .meta a{border:none;display:block;color:var(--ink)}
+  .rail .meta .lbl{color:var(--muted);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;margin-top:14px;display:block}
+
+  .main h2{font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin:0 0 18px;padding:0}
+  .main section{margin-bottom:56px}
+  .main section:first-child{margin-top:-8px}
+
+  .summary{font-size:18px;font-weight:400;line-height:1.5;letter-spacing:-0.2px;max-width:680px;color:var(--ink)}
+  .summary strong{font-weight:600;color:var(--ink)}
+
+  .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:0;padding:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+  .nums li{list-style:none;padding:16px 0;border-right:1px solid var(--rule)}
+  .nums li:last-child{border-right:none}
+  .nums .n{font-size:24px;font-weight:600;letter-spacing:-0.5px;line-height:1}
+  .nums .l{font-size:10.5px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:6px}
+
+  .job{display:grid;grid-template-columns:90px 1fr;gap:24px;padding:18px 0;border-top:1px solid var(--rule)}
+  .job:last-child{border-bottom:1px solid var(--rule)}
+  .job .yr{font-size:12px;color:var(--muted);font-weight:500;padding-top:2px;font-variant-numeric:tabular-nums}
+  .job h3{font-size:15px;font-weight:600;margin:0;letter-spacing:-0.2px}
+  .job .org{font-size:13px;color:var(--muted);margin:2px 0 8px}
+  .job .org::before{content:'— '}
+  .job p{margin:0 0 8px;font-size:13.5px;color:var(--ink)}
+  .job ul{margin:0;padding:0;list-style:none}
+  .job li{font-size:13.5px;padding:2px 0 2px 14px;position:relative}
+  .job li::before{content:'';position:absolute;left:0;top:11px;width:6px;height:1px;background:var(--ink)}
+  .job li .ctx{color:var(--muted);font-size:12.5px;font-style:italic}
+
+  .stack{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--ink)}
+  .stack div{padding:12px 16px 12px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:140px 1fr;gap:16px;font-size:13.5px}
+  .stack div .k{color:var(--muted);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;padding-top:2px}
+
+  .domain-note{font-size:13px;color:var(--muted);margin-top:14px;line-height:1.5}
+  .domain-note strong{color:var(--ink);font-weight:600}
+
+  .red{color:var(--red)}
+
+  @media (max-width: 900px){
+    body{padding:48px 32px 72px}
+    .grid{grid-template-columns:1fr;gap:36px}
+    .rail{position:static}
+    .stack div{grid-template-columns:130px 1fr;gap:12px;padding:10px 16px 10px 0}
+  }
+  @media (max-width: 520px){
+    body{padding:28px 18px 48px;font-size:13.5px}
+    .rail h1{font-size:24px}
+    .rail .role{font-size:12.5px}
+    .main h2{font-size:10.5px;margin-bottom:14px}
+    .summary{font-size:16px;line-height:1.45}
+    .nums li{padding:12px 0}
+    .nums .n{font-size:20px}
+    .nums .l{font-size:9.5px}
+    .job{grid-template-columns:1fr;gap:4px;padding:14px 0}
+    .job .yr{padding-top:0;font-size:11.5px}
+    .job h3{font-size:14.5px}
+    .job p, .job li{font-size:13px}
+    .stack div{grid-template-columns:1fr;gap:2px}
+    .stack div .k{padding-top:0;margin-bottom:2px}
+    .main section{margin-bottom:36px}
+  }
+
+  .print-btn{position:fixed;top:14px;right:14px;background:#111;color:#fff;border:none;padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.18);font-family:var(--sans)}
+  .print-btn:hover{background:var(--red)}
+
+  /* ---- Print: flatten grid, control page breaks ---- */
+  @media print {
+    @page { size: A4; margin: 14mm 14mm 16mm; }
+    html,body{background:#fff !important;color:#000 !important;font-size:11pt}
+    body{padding:0 !important;max-width:100% !important}
+    a{color:inherit !important;text-decoration:none !important;border:none !important}
+    *,*::before,*::after{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .grid{display:block !important}
+    .rail{position:static !important;margin-bottom:14px;display:grid;grid-template-columns:1fr 1fr;gap:6px 24px}
+    .rail h1{grid-column:1 / span 2;font-size:22pt}
+    .rail .role{grid-column:1 / span 2}
+    .rail .accent{display:none}
+    .main h2{margin-top:18px}
+    .main section{margin-bottom:18px !important}
+    .nums li,.job,.stack div{break-inside:avoid;page-break-inside:avoid}
+    h2,h3{break-after:avoid;page-break-after:avoid}
+    .print-btn{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()" title="Print / Save as PDF">↓ PDF</button>
+
+<div class="grid">
+
+  <aside class="rail">
+    <h1>Shinto C V</h1>
+    <div class="role">Senior Platform Engineer<br>Blockchain RPC Infrastructure</div>
+    <div class="accent"></div>
+    <div class="meta">
+      <a href="mailto:cshintov@gmail.com">cshintov@gmail.com</a>
+      <span>+91 80896 76207</span>
+      <a href="https://github.com/cshintov">github.com/cshintov</a>
+      <a href="https://www.linkedin.com/in/shinto-cv/">linkedin/shinto-cv</a>
+
+      <span class="lbl">Based</span>
+      Kerala, India — remote
+
+      <span class="lbl">Available</span>
+      Open to senior platform / SRE roles
+
+      <span class="lbl">Cert</span>
+      <a href="https://ti-user-certificates.s3.amazonaws.com/e0df7fbf-a057-42af-8a1f-590912be5460/80b43799-ddd1-58e2-9177-0a7fa5898d0b-shinto-c-v-e5f8e9cc-c843-46bb-aa3b-5152d126384c-certificate.pdf">CKA</a>
+    </div>
+  </aside>
+
+  <div class="main">
+
+    <section>
+      <p class="summary">Platform engineer running production blockchain RPC at <strong>Tatum</strong> — EVM and UTXO chain fleets across two GCP regions and OVH bare-metal, glued by Terraform, ArgoCD, Consul, and Envoy Gateway. Comfortable from L7 routing down to ZFS snapshots and chain-client tuning.
+</p>
+    </section>
+
+    <section>
+      <ul class="nums">
+<li><div class="n">8+</div><div class="l">Years infra</div></li>
+<li><div class="n">50+</div><div class="l">Chain fleets</div></li>
+<li><div class="n">GCP·AWS</div><div class="l">+ bare-metal</div></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Experience</h2>
+      <div class="job">
+        <div class="yr">2022 — now</div>
+        <div>
+          <h3>Cloud Platform Engineer</h3>
+          <div class="org">Tatum.io, Blockchain-as-a-Service</div>
+<p>Co-owner of the chain RPC infrastructure surface — node fleets, routing, observability, GitOps.</p>          <ul>
+            <li>Operate 50+ blockchain node fleets — Polygon, Ethereum, Bitcoin, Solana, BSC, Cosmos — across GKE in two GCP regions and OVH bare-metal via Ansible/Docker.</li>
+            <li>Contributed to migration of platform-API and chain-RPC admission from nginx-Lua to Envoy Gateway (Gateway API HTTPRoute + SecurityPolicy + extAuth), preserving SLO budget through cutover.</li>
+            <li>Authored progressive multi-region rollout patterns on ArgoCD ApplicationSets (RollingSync, ignoreDifferences, branch retargeting) and the runbooks for their failure modes.</li>
+            <li>Designed Consul-based unified service discovery across K8s, Nomad, and bare-metal — 60 members, 200+ RPC/WS endpoints.</li>
+            <li>Built the internal tooling layer: vitals snapshot CLI, dashboards-as-code workflow, ZFS-snapshot rollback for chain upgrades, MR-review knowledge base.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="job">
+        <div class="yr">2021 — 2022</div>
+        <div>
+          <h3>Senior DevOps Engineer</h3>
+          <div class="org">BlueEHR, Healthcare EHR</div>
+<p>Sole DevOps engineer. Took the platform from no-CI-no-monitoring to a working IaC and observability foundation. AWS-native stack.</p>          <ul>
+            <li>HA Jenkins on Kubernetes via JCasC; Gitflow, peer review, and IaC introduced as engineering practice.</li>
+            <li>Prometheus + Grafana + Loki — first real observability the team had.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="job">
+        <div class="yr">2020 — 2021</div>
+        <div>
+          <h3>Software / Infrastructure Engineer</h3>
+          <div class="org">Freelance, short-term engagements</div>
+<p>Short-term contract engagements across cloud and DevOps work — exploratory period between full-time roles.</p>        </div>
+      </div>
+      <div class="job">
+        <div class="yr">2019 — 2020</div>
+        <div>
+          <h3>DevOps Engineer</h3>
+          <div class="org">InfraCloud Technologies, Consulting</div>
+<p>None</p>          <ul>
+            <li>Resiliency testing with chaos-toolkit; Consul KV sidecar POC for hot-reload configuration.</li>
+            <li>Python tooling against the Kubernetes API for cluster-component health verification on deploy.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="job">
+        <div class="yr">2016 — 2019</div>
+        <div>
+          <h3>DevOps Engineer</h3>
+          <div class="org">Impelsys India</div>
+<p>Part of the team introducing DevOps practices org-wide. Jenkins/Groovy, Docker, Kubernetes, AWS, CloudFormation. Owned critical CI/CD migrations end-to-end.</p>        </div>
+      </div>
+      <div class="job">
+        <div class="yr">2015 — 2016</div>
+        <div>
+          <h3>Software Engineer</h3>
+          <div class="org">Impelsys India</div>
+<p>Built <a href="https://www.ezmarc.com/">ezmarc.com</a> with a teammate — a Python/Flask API converting book metadata to MARC records.</p>        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Tech</h2>
+      <div class="stack">
+<div><span class="k">Cloud</span><span>GCP, AWS, OVH bare-metal</span></div>
+<div><span class="k">Orchestration</span><span>Kubernetes, Nomad, Docker</span></div>
+<div><span class="k">IaC / GitOps</span><span>Terraform, Ansible, ArgoCD, Helm, Kustomize</span></div>
+<div><span class="k">Routing</span><span>Envoy Gateway, nginx, Consul, GCP Global LB</span></div>
+<div><span class="k">Observability</span><span>Prometheus, Grafana, Loki, SLOs</span></div>
+<div><span class="k">CI</span><span>GitLab CI, Jenkins (JCasC), GitHub Actions</span></div>
+<div><span class="k">Languages</span><span>Python, Bash, Go, Groovy</span></div>
+<div><span class="k">Blockchain</span><span>EVM (Erigon/Geth/Bor), BTC, Solana, BSC, Polygon, Cosmos</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Selected projects</h2>
+      <div class="job">
+        <div class="yr">2015</div>
+        <div>
+          <h3><a href="https://www.ezmarc.com/">ezmarc.com</a></h3>
+          <div class="org">Python / Flask / MARC</div>
+          <p>Co-designed and shipped as a fresher — a Python API converting book metadata into MARC library records.</p>
+        </div>
+      </div>
+      <div class="job">
+        <div class="yr">2025—</div>
+        <div>
+          <h3>LLM-assisted internal tooling</h3>
+          <div class="org">Claude Code skills, memory systems, ft bookmarks classifier</div>
+          <p>Custom skills and memory persistence for a working developer; X/Twitter bookmarks classifier (<code>ft</code>) for personal knowledge management.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+</body>
+</html>

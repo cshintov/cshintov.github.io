@@ -1,0 +1,251 @@
+{#- engineering-brief shell: sticky left rail, metric tiles, dense doc. Responsive. -#}
+{%- macro resolve(field) -%}
+  {%- if field is mapping -%}{{ field[framing] }}{%- else -%}{{ field }}{%- endif -%}
+{%- endmacro -%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ person.name }} — {% if framing == "platform" %}Platform / SRE {% endif %}Engineering Brief</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fafaf9; --panel:#fff; --ink:#0f172a; --muted:#64748b;
+    --rule:#e2e8f0; --accent:#0f766e; --accent-soft:#ccfbf1; --warn:#c2410c;
+    --sans:'Inter',system-ui,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.55}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .doc{display:grid;grid-template-columns:280px 1fr;min-height:100vh;max-width:1200px;margin:0 auto;box-shadow:0 0 0 1px var(--rule)}
+
+  .sidebar{background:var(--panel);border-right:1px solid var(--rule);padding:40px 32px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .sidebar h1{font-size:24px;font-weight:700;margin:0;letter-spacing:-0.5px}
+  .sidebar .role{color:var(--muted);font-size:13px;margin:4px 0 0;font-weight:500}
+  .sidebar .accent-bar{height:3px;width:40px;background:var(--accent);margin:20px 0}
+
+  .sidebar .block{margin-top:22px}
+  .sidebar .block .lbl{font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px}
+  .sidebar .block a, .sidebar .block .v{color:var(--ink);font-size:13px;display:block;line-height:1.7}
+  .sidebar .block a:hover{color:var(--accent)}
+
+  .toc{margin-top:32px;border-top:1px solid var(--rule);padding-top:20px}
+  .toc a{display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;padding:6px 0;border-bottom:1px dotted var(--rule);font-family:var(--mono)}
+  .toc a:hover{color:var(--accent)}
+  .toc a span:last-child{color:var(--muted);font-size:11px}
+
+  .main{padding:40px 56px 80px;max-width:920px}
+  .main h2{font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin:48px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--rule);font-family:var(--mono)}
+  .main h2:first-child{margin-top:0}
+  .main h2::before{content:'§ ';color:var(--muted)}
+
+  .hero{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:28px 32px;margin-bottom:8px}
+  .hero .standfirst{font-size:18px;line-height:1.5;color:var(--ink);margin:0;letter-spacing:-0.2px}
+  .hero .standfirst strong{color:var(--accent)}
+
+  .tiles{display:grid;grid-template-columns:repeat({{ f.metrics|length }},1fr);gap:12px;margin:20px 0 0}
+  .tile{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px 16px}
+  .tile .n{font-size:24px;font-weight:700;letter-spacing:-0.5px;color:var(--accent);line-height:1;font-family:var(--mono)}
+  .tile .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:6px;font-weight:600}
+
+  .job{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:20px 24px;margin-bottom:12px;position:relative}
+  .job .h{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:4px}
+  .job .h h3{font-size:16px;font-weight:600;margin:0;letter-spacing:-0.2px}
+  .job .h .date{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+  .job .org{font-size:13px;color:var(--accent);font-weight:500;margin-bottom:8px}
+  .job .intro{margin:0 0 10px;color:var(--ink);font-size:13.5px}
+  .job ul{margin:0;padding-left:18px}
+  .job li{font-size:13.5px;margin:3px 0}
+  .job li .ctx{color:var(--muted);font-size:12.5px;font-style:italic;display:block;margin-top:2px}
+  .badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;margin-right:6px;font-family:var(--mono)}
+
+  .stack-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .stack-row{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:12px 16px}
+  .stack-row .cat{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:6px;font-family:var(--mono)}
+  .stack-row .items{font-size:13px}
+  .chip{display:inline-block;background:#f1f5f9;color:var(--ink);font-size:11.5px;padding:2px 7px;border-radius:3px;margin:2px 3px 2px 0;font-family:var(--mono)}
+
+  .domain-row{background:transparent;border:1px dashed var(--rule);border-radius:6px;padding:12px 16px;margin-top:12px}
+  .domain-row .cat{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:6px;font-family:var(--mono)}
+  .domain-row .items{font-size:13px;color:var(--muted)}
+
+  .proj{display:grid;grid-template-columns:160px 1fr;gap:18px;background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px 18px;margin-bottom:8px}
+  .proj .meta{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .proj h4{margin:0 0 4px;font-size:14px;font-weight:600}
+  .proj p{margin:0;font-size:13px;color:var(--ink)}
+
+  @media (max-width: 980px){
+    .doc{grid-template-columns:1fr}
+    .sidebar{position:static;height:auto;padding:28px 28px 24px}
+    .main{padding:28px 28px 64px;max-width:100%}
+    .stack-grid{grid-template-columns:1fr}
+    .toc{display:none}
+  }
+  @media (max-width: 520px){
+    body{font-size:13.5px}
+    .sidebar{padding:22px 18px 18px}
+    .sidebar h1{font-size:22px}
+    .sidebar .role{font-size:12px}
+    .sidebar .block{margin-top:16px}
+    .main{padding:22px 16px 56px}
+    .main h2{font-size:10.5px;margin:36px 0 14px}
+    .hero{padding:20px 18px}
+    .hero .standfirst{font-size:15.5px;line-height:1.45}
+    .tiles{gap:8px}
+    .tile{padding:12px 14px}
+    .tile .n{font-size:20px}
+    .tile .l{font-size:10px}
+    .job{padding:16px 18px}
+    .job .h h3{font-size:15px}
+    .job .h .date{font-size:11px}
+    .job .org{font-size:12.5px}
+    .job .intro, .job li{font-size:13px}
+    .proj{grid-template-columns:1fr;gap:6px;padding:14px 16px}
+    .proj .meta{font-size:11px}
+    .stack-row{padding:14px 16px}
+    .badge{font-size:10px;padding:1px 7px}
+  }
+
+  .print-btn{position:fixed;top:14px;right:14px;background:var(--accent);color:#fff;border:none;padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.18);font-family:var(--sans)}
+  .print-btn:hover{background:#0d5d56}
+
+  /* ---- Print: stack to single column, avoid page breaks mid-block ---- */
+  @media print {
+    @page { size: A4; margin: 12mm 14mm 14mm; }
+    html,body{background:#fff !important;color:#000 !important;font-size:11pt}
+    body{padding:0 !important}
+    a{color:inherit !important;text-decoration:none !important}
+    *,*::before,*::after{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .doc{display:block !important;max-width:100% !important;box-shadow:none !important;min-height:0 !important}
+    .sidebar{position:static !important;height:auto !important;padding:0 0 12px !important;border-right:none !important;border-bottom:1px solid #ccc;display:grid;grid-template-columns:1fr 1fr;gap:8px 24px}
+    .sidebar h1{grid-column:1 / span 2;font-size:22pt}
+    .sidebar .role{grid-column:1 / span 2;margin-bottom:4px}
+    .sidebar .accent-bar{display:none}
+    .sidebar .block{margin-top:8px}
+    .toc{display:none !important}
+    .main{padding:14px 0 0 !important;max-width:100% !important}
+    .main h2{margin-top:18px !important;color:#0f766e !important}
+    .hero{padding:12px 14px !important}
+    .tiles{grid-template-columns:repeat(3,1fr) !important;gap:6px !important}
+    .tile{padding:8px 10px !important}
+    .job,.proj,.stack-row,.domain-row,.hero,.tile{break-inside:avoid;page-break-inside:avoid}
+    .job{padding:10px 12px !important;margin-bottom:6px !important}
+    h2,h3{break-after:avoid;page-break-after:avoid}
+    .stack-grid{grid-template-columns:repeat(2,1fr) !important}
+    .print-btn{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()" title="Print / Save as PDF">↓ PDF</button>
+
+<div class="doc">
+
+  <aside class="sidebar">
+    <h1>{{ person.name }}</h1>
+    <div class="role">{{ f.title_short }} · {{ f.title_line2 }}</div>
+    <div class="accent-bar"></div>
+
+    <div class="block">
+      <div class="lbl">Contact</div>
+      <a href="mailto:{{ person.email }}">{{ person.email }}</a>
+      <span class="v">{{ person.phone }}</span>
+    </div>
+    <div class="block">
+      <div class="lbl">Online</div>
+      <a href="{{ person.github_url }}">{{ person.github_label }}</a>
+      <a href="{{ person.linkedin_url }}">{{ person.linkedin_label }}</a>
+    </div>
+    <div class="block">
+      <div class="lbl">Location</div>
+      <span class="v">{{ person.location }}</span>
+    </div>
+    <div class="block">
+      <div class="lbl">Certifications</div>
+      <a href="{{ person.cka_url }}">Certified Kubernetes Administrator</a>
+    </div>
+
+    <div class="toc">
+      <a href="#summary"><span>Summary</span><span>§01</span></a>
+      <a href="#exp"><span>Experience</span><span>§02</span></a>
+      <a href="#stack"><span>Tech stack</span><span>§03</span></a>
+      <a href="#proj"><span>Projects</span><span>§04</span></a>
+      <a href="#cred"><span>Credentials</span><span>§05</span></a>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <section id="summary">
+      <h2>Summary</h2>
+      <div class="hero">
+        <p class="standfirst">{{ f.summary | safe }}</p>
+      </div>
+      <div class="tiles">
+        {% for m in f.metrics %}<div class="tile"><div class="n">{{ m.n }}</div><div class="l">{{ m.l }}</div></div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section id="exp">
+      <h2>Experience</h2>
+      {% for job in experience %}
+      <div class="job">
+        <div class="h"><h3>{{ job.title }}</h3><div class="date">{{ job.date_iso }}</div></div>
+        <div class="org">{{ job.org }}{% if job.org_byline %} · {{ job.org_byline }}{% endif %}</div>
+        {% set intro = resolve(job.intro) %}
+        {% if intro %}<p class="intro">{{ intro | safe }}</p>{% endif %}
+        {% if job.bullets %}
+        <ul>
+          {% for b in job.bullets %}
+          {% set ctx = b.get('ctx', {}).get(framing) if b.get('ctx') is mapping else none %}
+          <li><span class="badge">{{ b.tag }}</span>{{ resolve(b.text) | safe }}{% if ctx %}<span class="ctx">{{ ctx }}</span>{% endif %}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </section>
+
+    <section id="stack">
+      <h2>Tech stack</h2>
+      <div class="stack-grid">
+        {% for row in tech_stack_common + f.tech_stack_tail %}<div class="stack-row"><div class="cat">{{ row.cat }}</div><div class="items">{% for item in row['items'] %}<span class="chip">{{ item }}</span>{% endfor %}</div></div>
+        {% endfor %}
+      </div>
+      {% if f.domain_note %}
+      <div class="domain-row">
+        <div class="cat">Domain experience</div>
+        <div class="items">{{ f.domain_note }}</div>
+      </div>
+      {% endif %}
+    </section>
+
+    <section id="proj">
+      <h2>Projects</h2>
+      {% for p in projects %}
+      <div class="proj">
+        <div class="meta">{{ p.date }} · {{ p.byline }}</div>
+        <div><h4>{% if p.url %}<a href="{{ p.url }}">{{ p.title }}</a>{% else %}{{ p.title }}{% endif %}</h4><p>{{ p.text | safe }}</p></div>
+      </div>
+      {% endfor %}
+    </section>
+
+    <section id="cred">
+      <h2>Credentials</h2>
+      <div class="job">
+        <div class="h"><h3>Certified Kubernetes Administrator</h3><div class="date">CKA · The Linux Foundation</div></div>
+        <p class="intro"><a href="{{ person.cka_url }}">View certificate →</a></p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>

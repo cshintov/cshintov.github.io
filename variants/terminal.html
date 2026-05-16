@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Shinto C V — Platform Engineer · Blockchain RPC</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --line:#21262d;
+    --fg:#c9d1d9; --dim:#8b949e; --hl:#7ee787; --acc:#79c0ff; --warn:#ffa657; --pink:#ff7b72;
+    --mono:'JetBrains Mono','SF Mono','Menlo',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--mono);font-size:14px;line-height:1.55}
+  body{max-width:920px;margin:0 auto;padding:48px 32px 80px}
+  a{color:var(--acc);text-decoration:none;border-bottom:1px dotted var(--acc)}
+  a:hover{color:var(--hl)}
+  .prompt{color:var(--hl)}
+  .flag{color:var(--warn)}
+  .var{color:var(--pink)}
+  .str{color:var(--hl)}
+  .com{color:var(--dim)}
+  .num{color:var(--warn)}
+  header{border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:32px}
+  header h1{font-size:28px;margin:0 0 4px;letter-spacing:-0.5px;color:#fff}
+  header .role{color:var(--hl);font-size:15px;margin-bottom:14px}
+  header .meta{color:var(--dim);font-size:13px}
+  header .meta span{margin-right:18px}
+  .strip{display:flex;flex-wrap:wrap;gap:14px;margin:20px 0 0;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:4px}
+  .strip div{font-size:12.5px}
+  .strip b{color:var(--hl);font-weight:600}
+  h2{font-size:14px;color:var(--warn);text-transform:none;margin:38px 0 14px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  h2::before{content:'$ ';color:var(--hl)}
+  .job{margin:18px 0 22px;padding-left:14px;border-left:2px solid var(--line)}
+  .job .h{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .job .h b{color:#fff;font-weight:600}
+  .job .h .co{color:var(--acc)}
+  .job .h .date{color:var(--dim);font-size:12.5px}
+  .job p{margin:6px 0 8px;color:var(--dim);font-size:13px}
+  ul{margin:6px 0 0;padding:0;list-style:none}
+  li{padding:2px 0;color:var(--fg)}
+  li::before{content:'→ ';color:var(--hl)}
+  .stack{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 28px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:4px}
+  .stack div{font-size:13px}
+  .stack b{color:var(--warn);font-weight:600;display:inline-block;min-width:130px}
+  .gap-note{color:var(--dim);font-size:12px;padding:8px 14px;background:var(--panel);border-left:2px solid var(--warn);margin:8px 0 0}
+  footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:var(--dim);font-size:12px}
+  .cursor{display:inline-block;width:8px;height:14px;background:var(--hl);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .print-btn{position:fixed;top:14px;right:14px;background:var(--hl);color:#000;border:none;padding:7px 14px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.4);font-family:var(--mono)}
+  .print-btn:hover{background:var(--acc)}
+
+  /* ---- Print: light theme, controlled page breaks ---- */
+  @media print {
+    @page { size: A4; margin: 14mm 14mm 16mm; }
+    html,body{background:#fff !important;color:#111 !important;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10.5pt}
+    body{padding:0 !important;max-width:100% !important}
+    a{color:inherit !important;text-decoration:none !important;border:none !important}
+    *,*::before,*::after{-webkit-print-color-adjust:exact;print-color-adjust:exact;color:#111 !important;background:transparent !important;border-color:#ccc !important}
+    header{padding-bottom:10px;margin-bottom:14px;border-bottom:1px solid #ccc !important}
+    header h1{font-size:20pt;color:#111 !important}
+    .cursor{display:none !important}
+    .strip{padding:6px 0;border:none !important;display:flex;gap:18px}
+    .strip b{color:#0f766e !important}
+    h2{color:#c2410c !important;margin-top:18px !important}
+    .job,.stack,.gap-note,header{break-inside:avoid;page-break-inside:avoid}
+    .job{padding-left:8px;border-left:2px solid #ccc !important;margin:10px 0 14px}
+    li::before{color:#0f766e !important}
+    h2,h3{break-after:avoid;page-break-after:avoid}
+    .print-btn{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()" title="Print / Save as PDF">↓ PDF</button>
+
+<header>
+  <h1>shinto.cv<span class="cursor"></span></h1>
+  <div class="role">Senior Platform Engineer · Blockchain RPC Infrastructure</div>
+  <div class="meta">
+    <span><span class="com">// </span>cshintov@gmail.com</span>
+    <span><span class="com">// </span>+91 80896 76207</span>
+    <span><span class="com">// </span><a href="https://github.com/cshintov">github/cshintov</a></span>
+    <span><span class="com">// </span><a href="https://www.linkedin.com/in/shinto-cv/">linkedin/shinto-cv</a></span>
+  </div>
+  <div class="strip">
+    <div><b>8+ yrs</b> infra</div>
+    <div><b>50+ chains</b> in prod</div>
+    <div><b>GCP · AWS</b> + OVH bare-metal</div>
+    <div><b>CKA</b> certified</div>
+    <div><b>GitOps</b> end-to-end</div>
+  </div>
+</header>
+
+<section>
+  <h2>summary</h2>
+  <p style="margin:0 0 6px">Platform / SRE engineer running production blockchain RPC at Tatum — EVM + UTXO fleets across GKE (eu-west4, us-west1) and OVH bare-metal, glued by Terraform, ArgoCD ApplicationSets, Consul, and Envoy Gateway. Comfortable from L7 routing down to ZFS snapshot recovery and chain-client tuning. Bias toward small, well-typed primitives and observable systems.</p>
+</section>
+
+<section>
+  <h2>experience</h2>
+
+  <div class="job">
+    <div class="h"><span><b>Cloud Platform Engineer</b> · <span class="co">Tatum.io</span></span><span class="date">06/2022 → present</span></div>
+    <p>Blockchain-as-a-Service. Co-owner of the chain infrastructure surface — node fleets, routing, observability, GitOps.</p>
+    <ul>
+      <li>Operate <span class="num">50+</span> blockchain node fleets (Polygon, Ethereum, Bitcoin, Solana, BSC, Cosmos, …) across GKE in two GCP regions and OVH bare-metal via Ansible/Docker.</li>
+      <li>Contributed to migration of platform-API and chain-RPC admission from nginx-Lua to <span class="str">Envoy Gateway</span> (Gateway API HTTPRoute + SecurityPolicy + extAuth), preserving SLO budget through cutover.</li>
+      <li>Authored progressive multi-region rollout patterns on <span class="str">ArgoCD ApplicationSets</span> (RollingSync, ignoreDifferences, AppSet branch retargeting); built incident playbooks for the rough edges.</li>
+      <li>Designed/maintained <span class="str">Consul</span>-based unified service discovery spanning K8s + Nomad + bare-metal (60 members, 200+ RPC/WS endpoints).</li>
+      <li>Built internal tooling: vitals snapshot CLI, dashboards-as-code workflow, ZFS-snapshot rollback recipes for chain upgrades, MR-review knowledge base.</li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="h"><span><b>Senior DevOps Engineer</b> · <span class="co">BlueEHR</span></span><span class="date">02/2021 → 05/2022</span></div>
+    <p>Sole DevOps engineer for a healthcare EHR platform — established the infra and CI/CD foundation from scratch. AWS-native stack.</p>
+    <ul>
+      <li>Stood up HA Jenkins on Kubernetes configured via <span class="str">JCasC</span>; introduced Gitflow, peer review, and IaC discipline.</li>
+      <li>Instrumented the platform with Prometheus, Grafana, Loki — first observability the team had.</li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="h"><span><b>Software / Infrastructure Engineer</b> · <span class="co">Freelance / contract</span></span><span class="date">01/2020 → 02/2021</span></div>
+    <p>Short-term engagements across cloud and DevOps work — exploratory period between full-time roles.</p>
+  </div>
+
+  <div class="job">
+    <div class="h"><span><b>DevOps Engineer</b> · <span class="co">InfraCloud Technologies</span></span><span class="date">07/2019 → 01/2020</span></div>
+    <p>Consulting on Kubernetes adoption — POCs and production work for client migrations.</p>
+    <ul>
+      <li>Resiliency testing with <a href="https://chaostoolkit.org/">chaos-toolkit</a>; Consul KV sidecar POC for hot-reload config.</li>
+      <li>Python tooling against the Kubernetes API for cluster-component health verification on deploy.</li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="h"><span><b>DevOps Engineer</b> · <span class="co">Impelsys India</span></span><span class="date">08/2016 → 06/2019</span></div>
+    <p>Org-wide DevOps adoption — Jenkins/Groovy, Docker, Kubernetes, AWS, CloudFormation. Owned critical CI/CD migrations end-to-end.</p>
+  </div>
+
+  <div class="job">
+    <div class="h"><span><b>Software Engineer</b> · <span class="co">Impelsys India</span></span><span class="date">10/2015 → 07/2016</span></div>
+    <p>Built <a href="https://www.ezmarc.com/">ezmarc.com</a> as a fresher with a teammate — Python/Flask API converting book metadata to MARC records.</p>
+  </div>
+</section>
+
+<section>
+  <h2>tech</h2>
+  <div class="stack">
+    <div><b>Cloud</b> GCP · AWS · OVH bare-metal</div>
+    <div><b>Orchestration</b> Kubernetes · Nomad · Docker</div>
+    <div><b>IaC / GitOps</b> Terraform · Ansible · ArgoCD · Helm · Kustomize</div>
+    <div><b>Routing</b> Envoy Gateway · nginx · GCP Global LB · Consul</div>
+    <div><b>Observability</b> Prometheus · Grafana · Loki · SLOs</div>
+    <div><b>CI</b> GitLab CI · Jenkins (JCasC) · GitHub Actions</div>
+    <div><b>Languages</b> Python · Bash · Go · Groovy</div>
+    <div><b>Blockchain</b> EVM (Erigon/Geth/Bor) · BTC · Solana · BSC · Polygon · Cosmos</div>
+  </div>
+</section>
+
+<section>
+  <h2>selected projects</h2>
+  <ul>
+    <li><a href="https://www.ezmarc.com/">ezmarc.com</a> — Python/Flask MARC-record API, co-designed and shipped as a fresher.</li>
+    <li>LLM-assisted internal tooling — custom Claude Code skills, persistent memory systems, and an X/Twitter bookmarks classifier (<code>ft</code>) for personal knowledge management.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>credentials</h2>
+  <ul>
+    <li><a href="https://ti-user-certificates.s3.amazonaws.com/e0df7fbf-a057-42af-8a1f-590912be5460/80b43799-ddd1-58e2-9177-0a7fa5898d0b-shinto-c-v-e5f8e9cc-c843-46bb-aa3b-5152d126384c-certificate.pdf">Certified Kubernetes Administrator (CKA)</a></li>
+  </ul>
+</section>
+
+<footer>
+  <span class="com">// last updated 2026-05 · built handcrafted, no template</span>
+</footer>
+
+</body>
+</html>

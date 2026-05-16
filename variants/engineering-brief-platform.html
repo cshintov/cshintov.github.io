@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Shinto C V — Platform / SRE Engineering Brief</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fafaf9; --panel:#fff; --ink:#0f172a; --muted:#64748b;
+    --rule:#e2e8f0; --accent:#0f766e; --accent-soft:#ccfbf1; --warn:#c2410c;
+    --sans:'Inter',system-ui,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.55}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .doc{display:grid;grid-template-columns:280px 1fr;min-height:100vh;max-width:1200px;margin:0 auto;box-shadow:0 0 0 1px var(--rule)}
+
+  .sidebar{background:var(--panel);border-right:1px solid var(--rule);padding:40px 32px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .sidebar h1{font-size:24px;font-weight:700;margin:0;letter-spacing:-0.5px}
+  .sidebar .role{color:var(--muted);font-size:13px;margin:4px 0 0;font-weight:500}
+  .sidebar .accent-bar{height:3px;width:40px;background:var(--accent);margin:20px 0}
+
+  .sidebar .block{margin-top:22px}
+  .sidebar .block .lbl{font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px}
+  .sidebar .block a, .sidebar .block .v{color:var(--ink);font-size:13px;display:block;line-height:1.7}
+  .sidebar .block a:hover{color:var(--accent)}
+
+  .toc{margin-top:32px;border-top:1px solid var(--rule);padding-top:20px}
+  .toc a{display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;padding:6px 0;border-bottom:1px dotted var(--rule);font-family:var(--mono)}
+  .toc a:hover{color:var(--accent)}
+  .toc a span:last-child{color:var(--muted);font-size:11px}
+
+  .main{padding:40px 56px 80px;max-width:920px}
+  .main h2{font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin:48px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--rule);font-family:var(--mono)}
+  .main h2:first-child{margin-top:0}
+  .main h2::before{content:'§ ';color:var(--muted)}
+
+  .hero{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:28px 32px;margin-bottom:8px}
+  .hero .standfirst{font-size:18px;line-height:1.5;color:var(--ink);margin:0;letter-spacing:-0.2px}
+  .hero .standfirst strong{color:var(--accent)}
+
+  .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0 0}
+  .tile{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px 16px}
+  .tile .n{font-size:24px;font-weight:700;letter-spacing:-0.5px;color:var(--accent);line-height:1;font-family:var(--mono)}
+  .tile .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:6px;font-weight:600}
+
+  .job{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:20px 24px;margin-bottom:12px;position:relative}
+  .job .h{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:4px}
+  .job .h h3{font-size:16px;font-weight:600;margin:0;letter-spacing:-0.2px}
+  .job .h .date{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+  .job .org{font-size:13px;color:var(--accent);font-weight:500;margin-bottom:8px}
+  .job .intro{margin:0 0 10px;color:var(--ink);font-size:13.5px}
+  .job ul{margin:0;padding-left:18px}
+  .job li{font-size:13.5px;margin:3px 0}
+  .job li .ctx{color:var(--muted);font-size:12.5px;font-style:italic;display:block;margin-top:2px}
+  .badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;margin-right:6px;font-family:var(--mono)}
+
+  .stack-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .stack-row{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:12px 16px}
+  .stack-row .cat{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:6px;font-family:var(--mono)}
+  .stack-row .items{font-size:13px}
+  .chip{display:inline-block;background:#f1f5f9;color:var(--ink);font-size:11.5px;padding:2px 7px;border-radius:3px;margin:2px 3px 2px 0;font-family:var(--mono)}
+
+  .domain-row{background:transparent;border:1px dashed var(--rule);border-radius:6px;padding:12px 16px;margin-top:12px}
+  .domain-row .cat{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:6px;font-family:var(--mono)}
+  .domain-row .items{font-size:13px;color:var(--muted)}
+
+  .proj{display:grid;grid-template-columns:160px 1fr;gap:18px;background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px 18px;margin-bottom:8px}
+  .proj .meta{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .proj h4{margin:0 0 4px;font-size:14px;font-weight:600}
+  .proj p{margin:0;font-size:13px;color:var(--ink)}
+
+  @media (max-width: 980px){
+    .doc{grid-template-columns:1fr}
+    .sidebar{position:static;height:auto;padding:28px 28px 24px}
+    .main{padding:28px 28px 64px;max-width:100%}
+    .stack-grid{grid-template-columns:1fr}
+    .toc{display:none}
+  }
+  @media (max-width: 520px){
+    body{font-size:13.5px}
+    .sidebar{padding:22px 18px 18px}
+    .sidebar h1{font-size:22px}
+    .sidebar .role{font-size:12px}
+    .sidebar .block{margin-top:16px}
+    .main{padding:22px 16px 56px}
+    .main h2{font-size:10.5px;margin:36px 0 14px}
+    .hero{padding:20px 18px}
+    .hero .standfirst{font-size:15.5px;line-height:1.45}
+    .tiles{gap:8px}
+    .tile{padding:12px 14px}
+    .tile .n{font-size:20px}
+    .tile .l{font-size:10px}
+    .job{padding:16px 18px}
+    .job .h h3{font-size:15px}
+    .job .h .date{font-size:11px}
+    .job .org{font-size:12.5px}
+    .job .intro, .job li{font-size:13px}
+    .proj{grid-template-columns:1fr;gap:6px;padding:14px 16px}
+    .proj .meta{font-size:11px}
+    .stack-row{padding:14px 16px}
+    .badge{font-size:10px;padding:1px 7px}
+  }
+
+  .print-btn{position:fixed;top:14px;right:14px;background:var(--accent);color:#fff;border:none;padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.18);font-family:var(--sans)}
+  .print-btn:hover{background:#0d5d56}
+
+  /* ---- Print: stack to single column, avoid page breaks mid-block ---- */
+  @media print {
+    @page { size: A4; margin: 12mm 14mm 14mm; }
+    html,body{background:#fff !important;color:#000 !important;font-size:11pt}
+    body{padding:0 !important}
+    a{color:inherit !important;text-decoration:none !important}
+    *,*::before,*::after{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .doc{display:block !important;max-width:100% !important;box-shadow:none !important;min-height:0 !important}
+    .sidebar{position:static !important;height:auto !important;padding:0 0 12px !important;border-right:none !important;border-bottom:1px solid #ccc;display:grid;grid-template-columns:1fr 1fr;gap:8px 24px}
+    .sidebar h1{grid-column:1 / span 2;font-size:22pt}
+    .sidebar .role{grid-column:1 / span 2;margin-bottom:4px}
+    .sidebar .accent-bar{display:none}
+    .sidebar .block{margin-top:8px}
+    .toc{display:none !important}
+    .main{padding:14px 0 0 !important;max-width:100% !important}
+    .main h2{margin-top:18px !important;color:#0f766e !important}
+    .hero{padding:12px 14px !important}
+    .tiles{grid-template-columns:repeat(3,1fr) !important;gap:6px !important}
+    .tile{padding:8px 10px !important}
+    .job,.proj,.stack-row,.domain-row,.hero,.tile{break-inside:avoid;page-break-inside:avoid}
+    .job{padding:10px 12px !important;margin-bottom:6px !important}
+    h2,h3{break-after:avoid;page-break-after:avoid}
+    .stack-grid{grid-template-columns:repeat(2,1fr) !important}
+    .print-btn{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()" title="Print / Save as PDF">↓ PDF</button>
+
+<div class="doc">
+
+  <aside class="sidebar">
+    <h1>Shinto C V</h1>
+    <div class="role">Senior Platform / SRE Engineer · Multi-region Kubernetes & GitOps</div>
+    <div class="accent-bar"></div>
+
+    <div class="block">
+      <div class="lbl">Contact</div>
+      <a href="mailto:cshintov@gmail.com">cshintov@gmail.com</a>
+      <span class="v">+91 80896 76207</span>
+    </div>
+    <div class="block">
+      <div class="lbl">Online</div>
+      <a href="https://github.com/cshintov">github.com/cshintov</a>
+      <a href="https://www.linkedin.com/in/shinto-cv/">linkedin/shinto-cv</a>
+    </div>
+    <div class="block">
+      <div class="lbl">Location</div>
+      <span class="v">Kerala, India — remote</span>
+    </div>
+    <div class="block">
+      <div class="lbl">Certifications</div>
+      <a href="https://ti-user-certificates.s3.amazonaws.com/e0df7fbf-a057-42af-8a1f-590912be5460/80b43799-ddd1-58e2-9177-0a7fa5898d0b-shinto-c-v-e5f8e9cc-c843-46bb-aa3b-5152d126384c-certificate.pdf">Certified Kubernetes Administrator</a>
+    </div>
+
+    <div class="toc">
+      <a href="#summary"><span>Summary</span><span>§01</span></a>
+      <a href="#exp"><span>Experience</span><span>§02</span></a>
+      <a href="#stack"><span>Tech stack</span><span>§03</span></a>
+      <a href="#proj"><span>Projects</span><span>§04</span></a>
+      <a href="#cred"><span>Credentials</span><span>§05</span></a>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <section id="summary">
+      <h2>Summary</h2>
+      <div class="hero">
+        <p class="standfirst">Platform engineer running production infrastructure at <strong>Tatum</strong> — 50+ stateful workloads across two GCP regions plus OVH bare-metal, GitOps end-to-end. Comfortable from L7 routing down to storage-layer recovery and stateful upgrades.
+</p>
+      </div>
+      <div class="tiles">
+<div class="tile"><div class="n">8+</div><div class="l">Years infra</div></div>
+<div class="tile"><div class="n">GCP·AWS</div><div class="l">+ bare-metal</div></div>
+      </div>
+    </section>
+
+    <section id="exp">
+      <h2>Experience</h2>
+      <div class="job">
+        <div class="h"><h3>Cloud Platform Engineer</h3><div class="date">2022-06 → present</div></div>
+        <div class="org">Tatum.io · Blockchain-as-a-Service</div>
+<p class="intro">Co-owner of the production infrastructure surface — workload orchestration, ingress, observability, GitOps.</p>        <ul>
+          <li><span class="badge">scale</span>Operate 50+ stateful workloads across GKE in two GCP regions and OVH bare-metal via Ansible/Docker.<span class="ctx">Domain: blockchain RPC nodes — EVM and UTXO families.</span></li>
+          <li><span class="badge">routing</span>Contributed to migration of platform-API and chain-RPC admission from nginx-Lua to Envoy Gateway (Gateway API HTTPRoute + SecurityPolicy + extAuth), preserving SLO budget through cutover.</li>
+          <li><span class="badge">gitops</span>Authored progressive multi-region rollout patterns on ArgoCD ApplicationSets (RollingSync, ignoreDifferences, branch retargeting) and the runbooks for their failure modes.</li>
+          <li><span class="badge">discovery</span>Designed Consul-based unified service discovery across K8s + Nomad + bare-metal — 60 members, 200+ service endpoints.</li>
+          <li><span class="badge">tools</span>Built the internal tooling layer: vitals snapshot CLI, dashboards-as-code workflow, snapshot-based rollback for stateful upgrades, MR-review knowledge base.</li>
+        </ul>
+      </div>
+      <div class="job">
+        <div class="h"><h3>Senior DevOps Engineer</h3><div class="date">2021-02 → 2022-05</div></div>
+        <div class="org">BlueEHR · Healthcare EHR</div>
+<p class="intro">Sole DevOps engineer. Took the platform from no-CI-no-monitoring to a working IaC and observability foundation. AWS-native stack.</p>        <ul>
+          <li><span class="badge">ci/cd</span>HA Jenkins on Kubernetes via JCasC; Gitflow, peer review, and IaC introduced as engineering practice.</li>
+          <li><span class="badge">o11y</span>Prometheus + Grafana + Loki — first real observability the team had.</li>
+        </ul>
+      </div>
+      <div class="job">
+        <div class="h"><h3>Software / Infrastructure Engineer</h3><div class="date">2020-01 → 2021-02</div></div>
+        <div class="org">Freelance · short-term engagements</div>
+<p class="intro">Short-term contract engagements across cloud and DevOps work — exploratory period between full-time roles.</p>      </div>
+      <div class="job">
+        <div class="h"><h3>DevOps Engineer</h3><div class="date">2019-07 → 2020-01</div></div>
+        <div class="org">InfraCloud Technologies · Consulting</div>
+<p class="intro">None</p>        <ul>
+          <li><span class="badge">chaos</span>Resiliency testing with chaos-toolkit; Consul KV sidecar POC for hot-reload configuration.</li>
+          <li><span class="badge">k8s</span>Python tooling against the Kubernetes API for cluster-component health verification on deploy.</li>
+        </ul>
+      </div>
+      <div class="job">
+        <div class="h"><h3>DevOps Engineer</h3><div class="date">2016-08 → 2019-06</div></div>
+        <div class="org">Impelsys India</div>
+<p class="intro">Part of the team introducing DevOps practices org-wide. Jenkins/Groovy, Docker, Kubernetes, AWS, CloudFormation. Owned critical CI/CD migrations end-to-end.</p>      </div>
+      <div class="job">
+        <div class="h"><h3>Software Engineer</h3><div class="date">2015-10 → 2016-07</div></div>
+        <div class="org">Impelsys India</div>
+<p class="intro">Built <a href="https://www.ezmarc.com/">ezmarc.com</a> with a teammate — a Python/Flask API converting book metadata to MARC records.</p>      </div>
+    </section>
+
+    <section id="stack">
+      <h2>Tech stack</h2>
+      <div class="stack-grid">
+<div class="stack-row"><div class="cat">Cloud</div><div class="items"><span class="chip">GCP</span><span class="chip">AWS</span><span class="chip">OVH bare-metal</span></div></div>
+<div class="stack-row"><div class="cat">Orchestration</div><div class="items"><span class="chip">Kubernetes</span><span class="chip">Nomad</span><span class="chip">Docker</span></div></div>
+<div class="stack-row"><div class="cat">IaC / GitOps</div><div class="items"><span class="chip">Terraform</span><span class="chip">Ansible</span><span class="chip">ArgoCD</span><span class="chip">Helm</span><span class="chip">Kustomize</span></div></div>
+<div class="stack-row"><div class="cat">Routing</div><div class="items"><span class="chip">Envoy Gateway</span><span class="chip">nginx</span><span class="chip">Consul</span><span class="chip">GCP Global LB</span></div></div>
+<div class="stack-row"><div class="cat">Observability</div><div class="items"><span class="chip">Prometheus</span><span class="chip">Grafana</span><span class="chip">Loki</span><span class="chip">SLOs</span></div></div>
+<div class="stack-row"><div class="cat">CI</div><div class="items"><span class="chip">GitLab CI</span><span class="chip">Jenkins (JCasC)</span><span class="chip">GitHub Actions</span></div></div>
+<div class="stack-row"><div class="cat">Languages</div><div class="items"><span class="chip">Python</span><span class="chip">Bash</span><span class="chip">Go</span><span class="chip">Groovy</span></div></div>
+<div class="stack-row"><div class="cat">Storage</div><div class="items"><span class="chip">ZFS snapshots</span><span class="chip">GCP PD / CSI</span><span class="chip">stateful upgrade workflows</span></div></div>
+      </div>
+      <div class="domain-row">
+        <div class="cat">Domain experience</div>
+        <div class="items">Blockchain infrastructure — EVM (Erigon, Geth, Bor), Bitcoin, Solana, BSC, Polygon, Cosmos. The skills above generalize; the substrate happens to be chains.
+</div>
+      </div>
+    </section>
+
+    <section id="proj">
+      <h2>Projects</h2>
+      <div class="proj">
+        <div class="meta">2015 · Python / Flask / MARC</div>
+        <div><h4><a href="https://www.ezmarc.com/">ezmarc.com</a></h4><p>Co-designed and shipped as a fresher — a Python API converting book metadata into MARC library records.</p></div>
+      </div>
+      <div class="proj">
+        <div class="meta">2025— · Claude Code skills, memory systems, ft bookmarks classifier</div>
+        <div><h4>LLM-assisted internal tooling</h4><p>Custom skills and memory persistence for a working developer; X/Twitter bookmarks classifier (<code>ft</code>) for personal knowledge management.</p></div>
+      </div>
+    </section>
+
+    <section id="cred">
+      <h2>Credentials</h2>
+      <div class="job">
+        <div class="h"><h3>Certified Kubernetes Administrator</h3><div class="date">CKA · The Linux Foundation</div></div>
+        <p class="intro"><a href="https://ti-user-certificates.s3.amazonaws.com/e0df7fbf-a057-42af-8a1f-590912be5460/80b43799-ddd1-58e2-9177-0a7fa5898d0b-shinto-c-v-e5f8e9cc-c843-46bb-aa3b-5152d126384c-certificate.pdf">View certificate →</a></p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>

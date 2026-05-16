@@ -1,0 +1,203 @@
+{#- swiss shell: B&W grid, single red accent. Responsive. -#}
+{%- macro resolve(field) -%}
+  {%- if field is mapping -%}{{ field[framing] }}{%- else -%}{{ field }}{%- endif -%}
+{%- endmacro -%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ person.name }}{% if framing == "platform" %} — Platform / SRE{% endif %}</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0a0a; --paper:#fff; --rule:#e8e8e8; --muted:#737373; --red:#e63946;
+    --sans:'Inter','Helvetica Neue',Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.55;font-weight:400}
+  body{max-width:1100px;margin:0 auto;padding:80px 64px 96px}
+  a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink)}
+  a:hover{color:var(--red);border-bottom-color:var(--red)}
+
+  .grid{display:grid;grid-template-columns:240px 1fr;gap:64px}
+  .rail{position:sticky;top:48px;align-self:start}
+  .rail h1{font-size:30px;font-weight:700;letter-spacing:-1px;margin:0 0 4px;line-height:1}
+  .rail .role{font-size:13px;color:var(--muted);font-weight:500;margin-bottom:24px;line-height:1.4}
+  .rail .accent{display:block;width:32px;height:2px;background:var(--red);margin-bottom:24px}
+  .rail .meta{font-size:12.5px;line-height:1.9;color:var(--ink)}
+  .rail .meta a{border:none;display:block;color:var(--ink)}
+  .rail .meta .lbl{color:var(--muted);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;margin-top:14px;display:block}
+
+  .main h2{font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin:0 0 18px;padding:0}
+  .main section{margin-bottom:56px}
+  .main section:first-child{margin-top:-8px}
+
+  .summary{font-size:18px;font-weight:400;line-height:1.5;letter-spacing:-0.2px;max-width:680px;color:var(--ink)}
+  .summary strong{font-weight:600;color:var(--ink)}
+
+  .nums{display:grid;grid-template-columns:repeat({{ f.metrics|length }},1fr);gap:0;margin:0;padding:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+  .nums li{list-style:none;padding:16px 0;border-right:1px solid var(--rule)}
+  .nums li:last-child{border-right:none}
+  .nums .n{font-size:24px;font-weight:600;letter-spacing:-0.5px;line-height:1}
+  .nums .l{font-size:10.5px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:6px}
+
+  .job{display:grid;grid-template-columns:90px 1fr;gap:24px;padding:18px 0;border-top:1px solid var(--rule)}
+  .job:last-child{border-bottom:1px solid var(--rule)}
+  .job .yr{font-size:12px;color:var(--muted);font-weight:500;padding-top:2px;font-variant-numeric:tabular-nums}
+  .job h3{font-size:15px;font-weight:600;margin:0;letter-spacing:-0.2px}
+  .job .org{font-size:13px;color:var(--muted);margin:2px 0 8px}
+  .job .org::before{content:'— '}
+  .job p{margin:0 0 8px;font-size:13.5px;color:var(--ink)}
+  .job ul{margin:0;padding:0;list-style:none}
+  .job li{font-size:13.5px;padding:2px 0 2px 14px;position:relative}
+  .job li::before{content:'';position:absolute;left:0;top:11px;width:6px;height:1px;background:var(--ink)}
+  .job li .ctx{color:var(--muted);font-size:12.5px;font-style:italic}
+
+  .stack{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--ink)}
+  .stack div{padding:12px 16px 12px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:140px 1fr;gap:16px;font-size:13.5px}
+  .stack div .k{color:var(--muted);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;padding-top:2px}
+
+  .domain-note{font-size:13px;color:var(--muted);margin-top:14px;line-height:1.5}
+  .domain-note strong{color:var(--ink);font-weight:600}
+
+  .red{color:var(--red)}
+
+  @media (max-width: 900px){
+    body{padding:48px 32px 72px}
+    .grid{grid-template-columns:1fr;gap:36px}
+    .rail{position:static}
+    .stack div{grid-template-columns:130px 1fr;gap:12px;padding:10px 16px 10px 0}
+  }
+  @media (max-width: 520px){
+    body{padding:28px 18px 48px;font-size:13.5px}
+    .rail h1{font-size:24px}
+    .rail .role{font-size:12.5px}
+    .main h2{font-size:10.5px;margin-bottom:14px}
+    .summary{font-size:16px;line-height:1.45}
+    .nums li{padding:12px 0}
+    .nums .n{font-size:20px}
+    .nums .l{font-size:9.5px}
+    .job{grid-template-columns:1fr;gap:4px;padding:14px 0}
+    .job .yr{padding-top:0;font-size:11.5px}
+    .job h3{font-size:14.5px}
+    .job p, .job li{font-size:13px}
+    .stack div{grid-template-columns:1fr;gap:2px}
+    .stack div .k{padding-top:0;margin-bottom:2px}
+    .main section{margin-bottom:36px}
+  }
+
+  .print-btn{position:fixed;top:14px;right:14px;background:#111;color:#fff;border:none;padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.18);font-family:var(--sans)}
+  .print-btn:hover{background:var(--red)}
+
+  /* ---- Print: flatten grid, control page breaks ---- */
+  @media print {
+    @page { size: A4; margin: 14mm 14mm 16mm; }
+    html,body{background:#fff !important;color:#000 !important;font-size:11pt}
+    body{padding:0 !important;max-width:100% !important}
+    a{color:inherit !important;text-decoration:none !important;border:none !important}
+    *,*::before,*::after{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .grid{display:block !important}
+    .rail{position:static !important;margin-bottom:14px;display:grid;grid-template-columns:1fr 1fr;gap:6px 24px}
+    .rail h1{grid-column:1 / span 2;font-size:22pt}
+    .rail .role{grid-column:1 / span 2}
+    .rail .accent{display:none}
+    .main h2{margin-top:18px}
+    .main section{margin-bottom:18px !important}
+    .nums li,.job,.stack div{break-inside:avoid;page-break-inside:avoid}
+    h2,h3{break-after:avoid;page-break-after:avoid}
+    .print-btn{display:none !important}
+  }
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()" title="Print / Save as PDF">↓ PDF</button>
+
+<div class="grid">
+
+  <aside class="rail">
+    <h1>{{ person.name }}</h1>
+    <div class="role">{{ f.title_short }}<br>{{ f.title_line2 }}</div>
+    <div class="accent"></div>
+    <div class="meta">
+      <a href="mailto:{{ person.email }}">{{ person.email }}</a>
+      <span>{{ person.phone }}</span>
+      <a href="{{ person.github_url }}">{{ person.github_label }}</a>
+      <a href="{{ person.linkedin_url }}">{{ person.linkedin_label }}</a>
+
+      <span class="lbl">Based</span>
+      {{ person.location }}
+
+      <span class="lbl">Available</span>
+      Open to senior platform / SRE roles
+
+      <span class="lbl">Cert</span>
+      <a href="{{ person.cka_url }}">CKA</a>
+    </div>
+  </aside>
+
+  <div class="main">
+
+    <section>
+      <p class="summary">{{ f.summary | safe }}</p>
+    </section>
+
+    <section>
+      <ul class="nums">
+        {% for m in f.metrics %}<li><div class="n">{{ m.n }}</div><div class="l">{{ m.l }}</div></li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <section>
+      <h2>Experience</h2>
+      {% for job in experience %}
+      <div class="job">
+        <div class="yr">{{ job.date_terse }}</div>
+        <div>
+          <h3>{{ job.title }}</h3>
+          <div class="org">{{ job.org }}{% if job.org_byline %}, {{ job.org_byline }}{% endif %}</div>
+          {% set intro = resolve(job.intro) %}
+          {% if intro %}<p>{{ intro | safe }}</p>{% endif %}
+          {% if job.bullets %}
+          <ul>
+            {% for b in job.bullets %}
+            {% set ctx = b.get('ctx', {}).get(framing) if b.get('ctx') is mapping else none %}
+            <li>{{ resolve(b.text) | safe }}{% if ctx %} <span class="ctx">({{ ctx }})</span>{% endif %}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </section>
+
+    <section>
+      <h2>Tech</h2>
+      <div class="stack">
+        {% for row in tech_stack_common + f.tech_stack_tail %}<div><span class="k">{{ row.cat }}</span><span>{{ row['items'] | join(', ') }}</span></div>
+        {% endfor %}
+      </div>
+      {% if f.domain_note %}<p class="domain-note"><strong>Domain experience:</strong> {{ f.domain_note }}</p>{% endif %}
+    </section>
+
+    <section>
+      <h2>Selected projects</h2>
+      {% for p in projects %}
+      <div class="job">
+        <div class="yr">{{ p.date }}</div>
+        <div>
+          <h3>{% if p.url %}<a href="{{ p.url }}">{{ p.title }}</a>{% else %}{{ p.title }}{% endif %}</h3>
+          <div class="org">{{ p.byline }}</div>
+          <p>{{ p.text | safe }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </section>
+
+  </div>
+</div>
+
+</body>
+</html>
