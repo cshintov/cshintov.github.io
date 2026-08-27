@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One Gate, One Line</title>
+<meta name="description" content="A stale hardware gate locked NVIDIA's GB10 (DGX Spark, sm_121) out of SGLang's fast sparse-decode kernel and crashed the server on startup. The one-line fix. PR #36649.">
+<meta name="author" content="Shinto Joseph">
+<link rel="canonical" href="https://cshintov.github.io/writeups/sglang-sm121-sparse-decode/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="cshintov.github.io">
+<meta property="og:title" content="One gate, one line: SGLang sparse decode on GB10 / DGX Spark">
+<meta property="og:description" content="A stale hardware gate locked NVIDIA's GB10 (DGX Spark, sm_121) out of SGLang's fast sparse-decode kernel and crashed the server on startup. The one-line fix. PR #36649.">
+<meta property="og:url" content="https://cshintov.github.io/writeups/sglang-sm121-sparse-decode/">
+<meta property="og:image" content="https://cshintov.github.io/writeups/sglang-sm121-sparse-decode/card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@codengod">
+<meta name="twitter:title" content="One gate, one line: SGLang sparse decode on GB10 / DGX Spark">
+<meta name="twitter:description" content="A stale hardware gate locked NVIDIA's GB10 (DGX Spark, sm_121) out of SGLang's fast sparse-decode kernel and crashed the server on startup. The one-line fix. PR #36649.">
+<meta name="twitter:image" content="https://cshintov.github.io/writeups/sglang-sm121-sparse-decode/card.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --bg:#f4f5f7; --panel:#ffffff; --panel-2:#eceef2; --ink:#14171c; --ink-soft:#525a66;
+    --line:#dadde3; --line-soft:#e7e9ee;
+    --lime:#3a8f16; --lime-ink:#2f7a10; --magenta:#c31f6d; --magenta-ink:#a81a5e;
+    --good:#3a8f16; --danger:#c31f6d;
+    --shadow:0 1px 0 rgba(0,0,0,.02),0 12px 34px -20px rgba(20,30,50,.4);
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:'IBM Plex Sans',system-ui,sans-serif;
+    --disp:'Sora','IBM Plex Sans',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0c0e12; --panel:#14171d; --panel-2:#1b1f27; --ink:#eceef2; --ink-soft:#9aa2b0;
+      --line:#282d37; --line-soft:#20242c;
+      --lime:#8fe23a; --lime-ink:#8fe23a; --magenta:#ff5aa0; --magenta-ink:#ff5aa0;
+      --good:#8fe23a; --danger:#ff5aa0;
+      --shadow:0 0 0 1px rgba(255,255,255,.02),0 26px 60px -30px rgba(0,0,0,.85);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0c0e12; --panel:#14171d; --panel-2:#1b1f27; --ink:#eceef2; --ink-soft:#9aa2b0;
+    --line:#282d37; --line-soft:#20242c;
+    --lime:#8fe23a; --lime-ink:#8fe23a; --magenta:#ff5aa0; --magenta-ink:#ff5aa0;
+    --good:#8fe23a; --danger:#ff5aa0;
+    --shadow:0 0 0 1px rgba(255,255,255,.02),0 26px 60px -30px rgba(0,0,0,.85);
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+    font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:820px;margin:0 auto;padding:0 22px 96px}
+  a{color:var(--lime-ink);text-decoration:none;border-bottom:1px solid color-mix(in oklab,var(--lime-ink) 35%,transparent)}
+  a:hover{border-bottom-color:var(--lime-ink)}
+
+  header.hero{padding:64px 0 30px;border-bottom:1px solid var(--line)}
+  .eyebrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-family:var(--mono);
+    font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
+  .tag{border:1px solid var(--line);border-radius:999px;padding:4px 11px;background:var(--panel)}
+  .tag.merged{color:var(--good);border-color:color-mix(in oklab,var(--good) 45%,var(--line))}
+  h1{font-family:var(--disp);font-weight:800;letter-spacing:-.022em;line-height:1.02;
+    font-size:clamp(33px,7.2vw,58px);margin:22px 0 6px;text-wrap:balance}
+  h1 .hl{color:var(--lime-ink)}
+  .dek{font-size:clamp(18px,2.6vw,21px);color:var(--ink-soft);max-width:60ch;margin:14px 0 4px}
+  .repo-line{margin-top:20px;font-family:var(--mono);font-size:13px;color:var(--ink-soft)}
+  .repo-line code{color:var(--ink)}
+
+  section{padding:44px 0;border-bottom:1px solid var(--line-soft)}
+  section:last-of-type{border-bottom:0}
+  .kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--magenta-ink);margin:0 0 10px;font-weight:600}
+  h2{font-family:var(--disp);font-weight:700;letter-spacing:-.015em;font-size:clamp(24px,4vw,33px);
+    margin:0 0 14px;line-height:1.1;text-wrap:balance}
+  h3{font-family:var(--disp);font-weight:700;font-size:19px;margin:26px 0 8px}
+  p{margin:0 0 16px;max-width:66ch}
+  strong{font-weight:600;color:var(--ink)}
+  .lede p{font-size:19px}
+  code{font-family:var(--mono)}
+  em.term{font-style:normal;color:var(--magenta-ink);font-weight:600}
+
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:26px 0 4px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 16px 15px;box-shadow:var(--shadow)}
+  .kpi .n{font-family:var(--disp);font-weight:800;font-size:27px;line-height:1;letter-spacing:-.02em}
+  .kpi .n.bad{color:var(--danger)} .kpi .n.ok{color:var(--good)}
+  .kpi .l{font-size:13px;color:var(--ink-soft);margin-top:8px;line-height:1.35}
+  @media(max-width:560px){.kpis{grid-template-columns:1fr;gap:10px}.kpi{display:flex;align-items:baseline;gap:14px}.kpi .l{margin-top:0}}
+
+  figure{margin:26px 0 8px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 18px 8px;box-shadow:var(--shadow);overflow-x:auto}
+  figcaption{font-size:13.5px;color:var(--ink-soft);margin-top:12px;padding:0 4px 4px;line-height:1.45}
+  figcaption b{color:var(--ink)}
+  svg{display:block;max-width:100%;height:auto;margin:0 auto}
+
+  .code{font-family:var(--mono);font-size:13.5px;line-height:1.65;background:var(--panel);
+    border:1px solid var(--line);border-radius:14px;overflow-x:auto;box-shadow:var(--shadow)}
+  .code .hd{padding:9px 14px;border-bottom:1px solid var(--line-soft);color:var(--ink-soft);
+    font-size:12px;letter-spacing:.04em;display:flex;justify-content:space-between;gap:10px}
+  .code pre{margin:0;padding:14px 16px;white-space:pre;min-width:max-content}
+  .del{color:var(--danger)} .add{color:var(--good)} .cmt{color:var(--ink-soft)} .kw{color:var(--magenta-ink)}
+
+  .callout{background:var(--panel-2);border:1px solid var(--line);border-left:3px solid var(--magenta);
+    border-radius:10px;padding:14px 16px;margin:20px 0;font-size:15.5px}
+  .callout b{color:var(--magenta-ink)}
+  .crashbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow-x:auto;margin:18px 0}
+  .crashbox .hd{padding:8px 14px;border-bottom:1px solid var(--line-soft);font-family:var(--mono);font-size:11.5px;color:var(--danger);letter-spacing:.04em}
+  .crashbox pre{margin:0;padding:12px 16px;font-family:var(--mono);font-size:12px;line-height:1.55;color:var(--ink-soft);white-space:pre;min-width:max-content}
+
+  ul.clean{margin:8px 0 16px;padding-left:0;list-style:none;max-width:66ch}
+  ul.clean li{position:relative;padding-left:24px;margin:9px 0}
+  ul.clean li::before{content:"";position:absolute;left:4px;top:.6em;width:8px;height:8px;
+    border-radius:2px;background:var(--lime)}
+
+  footer{padding:40px 0 0;color:var(--ink-soft);font-size:14px}
+  footer .btn{display:inline-block;font-family:var(--mono);font-size:13.5px;color:var(--ink);
+    border:1px solid var(--line);border-radius:10px;padding:9px 14px;background:var(--panel);margin-top:4px}
+  footer .btn:hover{border-color:var(--lime)}
+
+  .toggle{position:fixed;top:14px;right:14px;z-index:20;width:38px;height:38px;border-radius:50%;
+    border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font-size:16px;box-shadow:var(--shadow)}
+  .toggle:hover{border-color:var(--lime)}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<button class="toggle" id="themeBtn" aria-label="Toggle theme">◐</button>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">
+      <span class="tag">SGLang</span>
+      <span class="tag">PR #36649</span>
+      <span class="tag merged">● merged</span>
+      <span class="tag">cuda · gb10</span>
+    </div>
+    <h1>New chip, new model, <span class="hl">and a server that won't start.</span></h1>
+    <p class="dek">Bring up a DGX Spark, pull one of the new sparse-attention Qwen models, hit go: the server dies on startup, before it serves a single token. The fast decode kernel already ran on this chip. A stale hardware check just wasn't letting it through.</p>
+    <div class="repo-line">sgl-project/sglang · <code>qwen_sparse_attn_backend.py</code> · +2 / −2</div>
+  </header>
+
+  <section class="lede">
+    <p class="kicker">How we hit it</p>
+    <p>The <em class="term">DGX Spark</em> is NVIDIA's new GB10 desktop box for running models locally. Point it at one of the new sparse-attention Qwen models (<code>Qwen3.8-Flash-Next</code>), start SGLang, and it aborts during startup. Not a slow model. No model at all: the server never reaches ready.</p>
+    <p>The fast sparse-decode kernel (<code>trtllm-gen</code>) was gated behind a check for one GPU family. GB10 (the Grace-Blackwell chip in the DGX Spark) is a different compute capability, <code>sm_121</code>, so it failed the check and fell through to a slow fallback path.</p>
+    <p>On <code>sm_121</code> that fallback did not just run slow. It <strong>crashed the server on startup</strong>, during CUDA graph capture. Since it was the only decode path this backend had, the model would not serve at all. The fix admits <code>sm_121</code> to the gate. One line.</p>
+    <div class="kpis">
+      <div class="kpi"><div class="n bad">crash</div><div class="l">before: server never reaches ready on DGX Spark</div></div>
+      <div class="kpi"><div class="n ok">ready</div><div class="l">after: server starts and returns coherent output</div></div>
+      <div class="kpi"><div class="n">~35%</div><div class="l">faster gather + attention on the fast kernel vs the fallback</div></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="kicker">The setup</p>
+    <h2>Two decode kernels, one allowed to run</h2>
+    <p>This is the <em class="term">QSA</em> backend: Qwen Sparse Attention. During <strong>decode</strong>, the model generates one token at a time, so each step touches only a few rows of work. That shape wants a kernel built for it.</p>
+    <p>The backend has two options for decode:</p>
+    <ul class="clean">
+      <li><strong>trtllm-gen paged decode</strong> is the fast path. It runs the gather-plus-attention pair over a page-aligned scratch buffer, and the resolver's own comment measures it about <strong>35% faster</strong> than the alternative.</li>
+      <li><strong>FA4 cute varlen</strong> is the fallback. As that same comment admits, it "runs a prefill-shaped kernel at decode row counts", the wrong shape for one-token-at-a-time work.</li>
+    </ul>
+    <p>Which one you get is decided by a single gate: a hardware-capability check. And that check only said yes to one GPU family.</p>
+  </section>
+
+  <section>
+    <p class="kicker">The mechanism</p>
+    <h2>GB10 falls through, then aborts</h2>
+    <p>The gate was <code>is_sm100_supported()</code>. It passes on <code>sm_100</code> class hardware and returns the fast kernel. GB10 reports as <code>sm_121</code>, a newer compute capability, so it failed the check and got the fallback instead.</p>
+
+    <figure>
+      <div class="card">
+        <svg viewBox="0 0 760 470" role="img" aria-label="Dispatch diagram. Before the fix, the sm_100 gate sends GB10 (sm_121) to the FA4 fallback, which crashes at CUDA graph capture. After the fix, the gate is widened and sm_121 takes the fast trtllm-gen path.">
+          <defs>
+            <marker id="a1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="var(--ink-soft)"/></marker>
+            <marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="var(--danger)"/></marker>
+            <marker id="a3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="var(--good)"/></marker>
+          </defs>
+          <style>
+            .gd text{font-family:var(--mono);fill:var(--ink)}
+            .gd .lbl{font-size:12.5px} .gd .sub{font-size:11px;fill:var(--ink-soft)}
+            .gd .hdr{font-family:var(--disp);font-weight:700;font-size:13.5px}
+            .gd .chip{fill:var(--panel-2);stroke:var(--line);stroke-width:1.2}
+            .gd .gate{fill:var(--panel);stroke:var(--ink-soft);stroke-width:1.4}
+            .gd .fast{fill:none;stroke:var(--good);stroke-width:1.6}
+            .gd .slow{fill:none;stroke:var(--danger);stroke-width:1.6}
+            .gd .flow{stroke:var(--ink-soft);stroke-width:1.6;fill:none}
+            .gd .flowbad{stroke:var(--danger);stroke-width:1.8;fill:none}
+            .gd .flowgood{stroke:var(--good);stroke-width:1.8;fill:none}
+            .gd .divider{stroke:var(--line);stroke-width:1;stroke-dasharray:4 5}
+          </style>
+          <g class="gd">
+            <!-- BEFORE -->
+            <text class="hdr" x="24" y="30" fill="var(--danger)">BEFORE</text>
+            <text class="sub" x="94" y="30">gate: is_sm100_supported()</text>
+
+            <!-- inputs -->
+            <rect class="chip" x="24" y="52" width="150" height="34" rx="8"/>
+            <text class="lbl" x="40" y="74">sm_100 GPU</text>
+            <rect class="chip" x="24" y="98" width="150" height="34" rx="8" stroke="var(--magenta)"/>
+            <text class="lbl" x="40" y="120" fill="var(--magenta-ink)">GB10 · sm_121</text>
+
+            <!-- gate diamond -->
+            <path class="gate" d="M250,92 L300,66 L350,92 L300,118 Z"/>
+            <text class="sub" x="272" y="96">sm_100?</text>
+
+            <!-- lines into gate -->
+            <path class="flow" d="M174,69 C210,74 214,84 250,90" marker-end="url(#a1)"/>
+            <path class="flowbad" d="M174,115 C210,110 214,100 250,94" marker-end="url(#a2)"/>
+
+            <!-- fast path (sm_100 yes) -->
+            <path class="flowgood" d="M350,86 C400,80 410,74 452,72" marker-end="url(#a3)"/>
+            <rect class="fast" x="452" y="54" width="196" height="36" rx="9"/>
+            <text class="lbl" x="468" y="76" fill="var(--good)">trtllm-gen fast decode ✓</text>
+            <text class="sub" x="360" y="66">yes</text>
+
+            <!-- slow path (sm_121 no) -->
+            <path class="flowbad" d="M300,118 C300,150 300,150 300,168" marker-end="url(#a2)"/>
+            <text class="sub" x="308" y="150">no</text>
+            <rect class="slow" x="196" y="170" width="208" height="36" rx="9"/>
+            <text class="lbl" x="212" y="192" fill="var(--danger)">FA4 fallback (prefill-shaped)</text>
+            <!-- crash -->
+            <path class="flowbad" d="M300,206 C300,224 300,224 300,242" marker-end="url(#a2)"/>
+            <rect x="180" y="244" width="240" height="52" rx="9" fill="var(--panel)" stroke="var(--danger)" stroke-width="1.6"/>
+            <text class="hdr" x="200" y="266" fill="var(--danger)">✕ abort at CUDA graph capture</text>
+            <text class="sub" x="200" y="284">server never reaches ready</text>
+
+            <!-- divider -->
+            <line class="divider" x1="24" y1="322" x2="736" y2="322"/>
+
+            <!-- AFTER -->
+            <text class="hdr" x="24" y="356" fill="var(--good)">AFTER</text>
+            <text class="sub" x="86" y="356">gate: is_sm100_supported() OR is_sm121()</text>
+
+            <rect class="chip" x="24" y="384" width="150" height="34" rx="8" stroke="var(--good)"/>
+            <text class="lbl" x="40" y="406" fill="var(--good)">GB10 · sm_121</text>
+
+            <path class="gate" d="M250,401 L300,375 L350,401 L300,427 Z"/>
+            <text class="sub" x="264" y="399">sm_100 or</text>
+            <text class="sub" x="276" y="411">sm_121?</text>
+            <path class="flowgood" d="M174,401 C210,401 214,401 250,401" marker-end="url(#a3)"/>
+
+            <path class="flowgood" d="M350,395 C400,388 410,382 452,380" marker-end="url(#a3)"/>
+            <text class="sub" x="360" y="376">yes</text>
+            <rect class="fast" x="452" y="362" width="196" height="36" rx="9"/>
+            <text class="lbl" x="468" y="384" fill="var(--good)">trtllm-gen fast decode ✓</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption><b>The dispatch, before and after.</b> The kernel was never the problem: <code>trtllm-gen</code> imports and runs fine on <code>sm_121</code>. The gate just never offered it, so GB10 took the fallback and hit a crash. Widening the gate reroutes <code>sm_121</code> onto the path that already worked. Tap to zoom.</figcaption>
+    </figure>
+
+    <p>The fallback's failure on <code>sm_121</code> was not a slowdown. It aborted during CUDA graph capture, the step where the server records the kernel sequence before serving, with a layout error deep in FlashAttention's cute epilogue:</p>
+    <div class="crashbox">
+      <div class="hd">traceback · CUDA graph capture</div>
+<pre>File "flash_attn/cute/flash_fwd.py", line 393, in epilogue
+  MLIRError: Operation creation failed:
+  error: expects `coord` and shape of view are weakly
+  congruent, but got '!cute.layout&lt;"(?,?):(?{i64 div=8},1)"&gt;'</pre>
+    </div>
+    <p>Because <code>_forward_paged_attention</code> is the <strong>only</strong> decode path QSA has, that crash was terminal: no decode meant no serving. The model (<code>Qwen3.8-Flash-Next</code>) was simply unavailable on a DGX Spark.</p>
+  </section>
+
+  <section>
+    <p class="kicker">The fix</p>
+    <h2>Admit sm_121 to the gate</h2>
+    <p>The repo already ships an <code>is_sm121()</code> helper, added when GB10 support first landed. The fast kernel already imports on <code>sm_121</code>. So the fix is to widen the one gate that was excluding it.</p>
+
+    <div class="code">
+      <div class="hd"><span>qwen_sparse_attn_backend.py</span><span>_resolve_trtllm_sparse_decode</span></div>
+<pre><span class="del">- from sglang.srt.utils import is_sm100_supported</span>
+<span class="add">+ from sglang.srt.utils import is_sm100_supported, is_sm121</span>
+
+<span class="del">- if not is_sm100_supported():</span>
+<span class="add">+ if not (is_sm100_supported() or is_sm121()):</span>
+      return None</pre>
+    </div>
+
+    <ul class="clean">
+      <li><strong>No new kernel, no new API.</strong> It selects a path that already existed and already worked; it just was not reachable from GB10.</li>
+      <li><strong>Zero blast radius.</strong> <code>sm_90</code> and <code>sm_100</code> take the exact same branch as before. Only <code>sm_121</code> changes, from the crashing fallback to the fast kernel.</li>
+    </ul>
+  </section>
+
+  <section>
+    <p class="kicker">Why it matters</p>
+    <h2>Local Grace-Blackwell inference, off the slow path</h2>
+    <p>The DGX Spark is a small Grace-Blackwell box built for local model work. A gate that predates <code>sm_121</code> quietly locked it out of the fast sparse-decode kernel and, worse, onto a path that crashed on capture. One helper the repo already had, dropped into one condition, turns "will not start" into "starts and runs fast".</p>
+    <div class="callout"><b>The pattern.</b> New silicon reports a new compute capability, and every capability gate written before it now excludes it by default. The kernel worked; the allowlist was just stale. Widening a gate is often the whole fix, once you have proven the excluded path is actually safe.</div>
+    <p style="color:var(--ink-soft);font-size:14.5px">Measured on 2× DGX Spark (GB10, <code>sm_121</code>) serving <code>Qwen3.8-Flash-Next-NVFP4</code> at tensor-parallel 2 across 2 nodes: ~1318 tok/s prefill, ~24.8 tok/s decode. Before the change, no numbers exist, because the server did not start.</p>
+  </section>
+
+  <footer>
+    <a class="btn" href="https://github.com/sgl-project/sglang/pull/36649" target="_blank" rel="noopener">View PR #36649 on GitHub →</a>
+    <p style="margin-top:18px">Written up from the public PR. The diff is two lines; the reason it matters is that a whole class of GB10 users could not start the server without it.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var b=document.getElementById('themeBtn');
+  var root=document.documentElement;
+  function cur(){
+    var t=root.getAttribute('data-theme');
+    if(t) return t;
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
+  }
+  b.addEventListener('click',function(){
+    root.setAttribute('data-theme', cur()==='dark'?'light':'dark');
+  });
+})();
+</script>
+
+</body>
+</html>
