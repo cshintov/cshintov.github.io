@@ -153,16 +153,9 @@ projects:
   - { date: "2015",  title: "ezmarc.com", url: "https://www.ezmarc.com/", byline: "Python / Flask / MARC", text: "Co-designed and shipped as a fresher — a Python API converting book metadata into MARC library records." }
   - { date: "2025—", title: "LLM-assisted internal tooling",        byline: "Claude Code skills, memory systems, ft bookmarks classifier", text: "Custom skills and memory persistence for a working developer; X/Twitter bookmarks classifier (<code>ft</code>) for personal knowledge management." }
 
-# Build targets — (shell, framing) pairs. Output goes to variants/<filename>.
-# Convention: blockchain framing keeps the base name; platform gets -platform suffix.
+# Build targets.
 targets:
-  - { shell: swiss,             framing: blockchain, out: "swiss.html",                       label: "Swiss" }
-  - { shell: swiss,             framing: platform,   out: "swiss-platform.html",              label: "Swiss" }
-  - { shell: engineering-brief, framing: blockchain, out: "engineering-brief.html",           label: "Engineering Brief" }
-  - { shell: engineering-brief, framing: platform,   out: "engineering-brief-platform.html",  label: "Engineering Brief" }
-
-# Static shells (not yet ported to templates) — still appear in the index switcher.
-static_targets:
-  - { out: "terminal.html",        label: "Terminal",        framing: blockchain }
-  - { out: "editorial.html",       label: "Editorial",       framing: blockchain }
-  - { out: "gradient-modern.html", label: "Gradient Modern", framing: blockchain }
+  - { shell: engineering-brief, framing: blockchain, out: "engineering-brief.html",           label: "Blockchain" }
+  - { shell: engineering-brief, framing: platform,   out: "engineering-brief-platform.html",  label: "Platform / SRE" }
+  # Body-shop / staffing-agency format for specific recruiter handoffs (Word-doc style, no employer names, no durations).
+  - { shell: staffing-brief,    framing: platform,   out: "shinto-cv-devops.html",            label: "DevOps brief" }

@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Shinto C V — Resume variants</title>
+<title>Shinto C V — Resume</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
   :root{
     --bg:#0b0d12; --panel:#13161e; --line:#252a36; --ink:#e8e9ed; --dim:#7b8294;
-    --p1:#a855f7; --p2:#22d3ee; --teal:#0f766e;
+    --teal:#0f766e; --cyan:#22d3ee; --purple:#a855f7;
     --sans:'Inter','Helvetica Neue',system-ui,sans-serif;
     --mono:ui-monospace,'SF Mono','JetBrains Mono',monospace;
   }
@@ -15,56 +15,31 @@
   html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:13.5px}
   body{display:grid;grid-template-rows:auto 1fr}
 
-  header{
-    display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:18px;
-    padding:10px 18px 12px;background:var(--panel);
-    border-bottom:1px solid var(--line);
-  }
+  header{display:flex;align-items:center;gap:14px;padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
   .brand{display:flex;align-items:baseline;gap:8px}
   .brand .name{font-weight:700;letter-spacing:-0.3px;font-size:15px}
   .brand .lbl{color:var(--dim);font-family:var(--mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase}
 
-  .navs{display:flex;flex-direction:column;gap:6px}
-  .nav-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .nav-row .tag{
-    font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
-    color:var(--dim);padding:2px 8px;border:1px solid var(--line);border-radius:99px;white-space:nowrap;
-  }
-  .nav-row.framing-blockchain .tag{color:#c084fc;border-color:rgba(192,132,252,0.35)}
-  .nav-row.framing-platform   .tag{color:#5eead4;border-color:rgba(94,234,212,0.35)}
-
-  nav{display:flex;gap:4px;flex-wrap:wrap}
+  nav{display:flex;gap:6px;flex-wrap:wrap}
   nav button{
     appearance:none;background:transparent;border:1px solid var(--line);color:var(--ink);
-    padding:6px 12px;border-radius:999px;font-family:var(--sans);font-size:12px;font-weight:500;
-    cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;
+    padding:6px 14px;border-radius:999px;font-family:var(--sans);font-size:12.5px;font-weight:500;
+    cursor:pointer;transition:all .15s;
   }
-  nav button:hover{border-color:var(--p2);color:var(--p2)}
-  nav button.active{border-color:transparent;color:#fff;font-weight:600}
-  .framing-blockchain nav button.active{background:linear-gradient(135deg,var(--p1),#ec4899)}
-  .framing-platform   nav button.active{background:linear-gradient(135deg,var(--teal),var(--p2))}
+  nav button:hover{border-color:var(--cyan);color:var(--cyan)}
+  nav button.active{border-color:transparent;color:#fff;font-weight:600;background:linear-gradient(135deg,var(--teal),var(--cyan))}
 
-  .actions{display:flex;gap:8px;align-items:center}
-  .actions a{
-    color:var(--dim);text-decoration:none;font-family:var(--mono);font-size:11.5px;
-    padding:6px 12px;border:1px solid var(--line);border-radius:999px;transition:all .15s;white-space:nowrap;
-  }
+  .actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+  .actions a{color:var(--dim);text-decoration:none;font-family:var(--mono);font-size:11.5px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;transition:all .15s;white-space:nowrap}
   .actions a:hover{color:var(--ink);border-color:var(--ink)}
 
   main{position:relative;background:#fff}
   iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none}
   iframe.active{display:block}
 
-  @media (max-width: 860px){
-    header{grid-template-columns:1fr;gap:10px;padding:10px 12px}
-    .actions{display:none}
-  }
   @media (max-width: 520px){
     .brand .lbl{display:none}
-    .nav-row{gap:6px}
-    .nav-row .tag{font-size:9.5px;padding:2px 6px;letter-spacing:0.1em}
-    nav{gap:3px}
-    nav button{padding:5px 9px;font-size:11.5px}
+    nav button{padding:5px 10px;font-size:11.5px}
   }
 </style>
 </head>
@@ -73,42 +48,22 @@
 <header>
   <div class="brand">
     <span class="name">Shinto C V</span>
-    <span class="lbl">resume.variants/</span>
+    <span class="lbl">resume/</span>
   </div>
-
-  <div class="navs">
-    <div class="nav-row framing-blockchain">
-      <span class="tag">blockchain</span>
-      <nav class="tabs">
-<button data-src="swiss.html?v=1778918909" class="active">Swiss</button>
-<button data-src="engineering-brief.html?v=1778918909">Engineering Brief</button>
-<button data-src="terminal.html?v=1778918909">Terminal</button>
-<button data-src="editorial.html?v=1778918909">Editorial</button>
-<button data-src="gradient-modern.html?v=1778918909">Gradient Modern</button>
-      </nav>
-    </div>
-    <div class="nav-row framing-platform">
-      <span class="tag">platform</span>
-      <nav class="tabs">
-<button data-src="swiss-platform.html?v=1778918909">Swiss</button>
-<button data-src="engineering-brief-platform.html?v=1778918909">Engineering Brief</button>
-      </nav>
-    </div>
-  </div>
-
+  <nav class="tabs">
+<button data-src="engineering-brief.html?v=1779376156" class="active">Blockchain</button>
+<button data-src="engineering-brief-platform.html?v=1779376156">Platform / SRE</button>
+<button data-src="shinto-cv-devops.html?v=1779376156">DevOps brief</button>
+  </nav>
   <div class="actions">
-    <a id="open-tab" href="swiss.html" target="_blank" rel="noopener">↗ open in new tab</a>
-  </div>
+    <a id="open-tab" href="engineering-brief.html" target="_blank" rel="noopener">↗ open in new tab</a>
+<a href="pdf/engineering-brief.pdf" target="_blank">↓ Blockchain PDF</a><a href="pdf/engineering-brief-platform.pdf" target="_blank">↓ Platform / SRE PDF</a><a href="pdf/shinto-cv-devops.pdf" target="_blank">↓ DevOps brief PDF</a>  </div>
 </header>
 
 <main>
-<iframe id="f-swiss" src="swiss.html?v=1778918909" class="active" title="Swiss"></iframe>
-<iframe id="f-engineering-brief" data-src="engineering-brief.html?v=1778918909" title="Engineering Brief"></iframe>
-<iframe id="f-terminal" data-src="terminal.html?v=1778918909" title="Terminal"></iframe>
-<iframe id="f-editorial" data-src="editorial.html?v=1778918909" title="Editorial"></iframe>
-<iframe id="f-gradient-modern" data-src="gradient-modern.html?v=1778918909" title="Gradient Modern"></iframe>
-<iframe id="f-swiss-platform" data-src="swiss-platform.html?v=1778918909" title="Swiss"></iframe>
-<iframe id="f-engineering-brief-platform" data-src="engineering-brief-platform.html?v=1778918909" title="Engineering Brief"></iframe>
+<iframe id="f-engineering-brief" src="engineering-brief.html?v=1779376156" class="active" title="Blockchain"></iframe>
+<iframe id="f-engineering-brief-platform" data-src="engineering-brief-platform.html?v=1779376156" title="Platform / SRE"></iframe>
+<iframe id="f-shinto-cv-devops" data-src="shinto-cv-devops.html?v=1779376156" title="DevOps brief"></iframe>
 </main>
 
 <script>
@@ -117,14 +72,15 @@
   const openTab = document.getElementById('open-tab');
 
   function activate(src) {
+    const bareKey = src.replace(/\?.*$/, '').replace('.html', '');
     allTabs.forEach(b => b.classList.toggle('active', b.dataset.src === src));
     frames.forEach(fr => {
-      const want = (fr.id === 'f-' + src.replace('.html',''));
+      const want = (fr.id === 'f-' + bareKey);
       if (want && !fr.src) fr.src = fr.dataset.src || src;
       fr.classList.toggle('active', want);
     });
     openTab.href = src;
-    history.replaceState(null, '', '#' + src.replace('.html',''));
+    history.replaceState(null, '', '#' + bareKey);
   }
 
   allTabs.forEach(b => b.addEventListener('click', () => activate(b.dataset.src)));
