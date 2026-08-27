@@ -91,6 +91,7 @@ def main() -> None:
             tech_stack_common=data["tech_stack_common"],
             experience=data["experience"],
             projects=data["projects"],
+            oss=data.get("oss", []),
         )
         (OUT / out_name).write_text(html)
         rendered.append(out_name)

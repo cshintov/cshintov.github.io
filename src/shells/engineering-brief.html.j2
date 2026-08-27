@@ -6,7 +6,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>{{ person.name }} — {% if framing == "platform" %}Platform / SRE {% endif %}Engineering Brief</title>
+<title>{{ person.name }} · {% if framing == "platform" %}Platform / SRE {% endif %}Engineering Brief</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -55,8 +55,8 @@
 
   .job{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:20px 24px;margin-bottom:12px;position:relative}
   .job .h{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:4px}
-  .job .h h3{font-size:16px;font-weight:600;margin:0;letter-spacing:-0.2px}
-  .job .h .date{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+  .job .h h3{font-size:16px;font-weight:600;margin:0;letter-spacing:-0.2px;flex:1 1 auto;min-width:0}
+  .job .h .date{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap;flex:0 0 auto}
   .job .org{font-size:13px;color:var(--accent);font-weight:500;margin-bottom:8px}
   .job .intro{margin:0 0 10px;color:var(--ink);font-size:13.5px}
   .job ul{margin:0;padding-left:18px}
@@ -194,9 +194,10 @@
     <div class="toc">
       <a href="#summary"><span>Summary</span><span>§01</span></a>
       <a href="#exp"><span>Experience</span><span>§02</span></a>
-      <a href="#stack"><span>Tech stack</span><span>§03</span></a>
-      <a href="#proj"><span>Projects</span><span>§04</span></a>
-      <a href="#cred"><span>Credentials</span><span>§05</span></a>
+      <a href="#oss"><span>Open source</span><span>§03</span></a>
+      <a href="#stack"><span>Tech stack</span><span>§04</span></a>
+      <a href="#proj"><span>Projects</span><span>§05</span></a>
+      <a href="#cred"><span>Credentials</span><span>§06</span></a>
     </div>
   </aside>
 
@@ -219,8 +220,7 @@
       <div class="job">
         <div class="h"><h3>{{ job.title }}</h3><div class="date">{{ job.date_iso }}</div></div>
         <div class="org">{{ job.org }}{% if job.org_byline %} · {{ job.org_byline }}{% endif %}</div>
-        {% set intro = resolve(job.intro) %}
-        {% if intro %}<p class="intro">{{ intro | safe }}</p>{% endif %}
+        {% if job.intro %}<p class="intro">{{ resolve(job.intro) | safe }}</p>{% endif %}
         {% if job.bullets %}
         <ul>
           {% for b in job.bullets %}
@@ -232,6 +232,19 @@
       </div>
       {% endfor %}
     </section>
+
+    {% if oss %}
+    <section id="oss">
+      <h2>Open source</h2>
+      {% for o in oss %}
+      <div class="job">
+        <div class="h"><h3><a href="{{ o.url }}">{{ o.project }} #{{ o.pr }}</a> · {{ o.title }}</h3><div class="date">{{ o.date }} · merged</div></div>
+        <div class="org">{{ o.stack }}</div>
+        <p class="intro">{{ o.text }} <a href="{{ o.writeup }}">Writeup →</a></p>
+      </div>
+      {% endfor %}
+    </section>
+    {% endif %}
 
     <section id="stack">
       <h2>Tech stack</h2>

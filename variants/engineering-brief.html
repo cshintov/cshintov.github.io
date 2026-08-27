@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Shinto C V — Engineering Brief</title>
+<title>Shinto C V · Engineering Brief</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -51,8 +51,8 @@
 
   .job{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:20px 24px;margin-bottom:12px;position:relative}
   .job .h{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:4px}
-  .job .h h3{font-size:16px;font-weight:600;margin:0;letter-spacing:-0.2px}
-  .job .h .date{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+  .job .h h3{font-size:16px;font-weight:600;margin:0;letter-spacing:-0.2px;flex:1 1 auto;min-width:0}
+  .job .h .date{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap;flex:0 0 auto}
   .job .org{font-size:13px;color:var(--accent);font-weight:500;margin-bottom:8px}
   .job .intro{margin:0 0 10px;color:var(--ink);font-size:13.5px}
   .job ul{margin:0;padding-left:18px}
@@ -190,9 +190,10 @@
     <div class="toc">
       <a href="#summary"><span>Summary</span><span>§01</span></a>
       <a href="#exp"><span>Experience</span><span>§02</span></a>
-      <a href="#stack"><span>Tech stack</span><span>§03</span></a>
-      <a href="#proj"><span>Projects</span><span>§04</span></a>
-      <a href="#cred"><span>Credentials</span><span>§05</span></a>
+      <a href="#oss"><span>Open source</span><span>§03</span></a>
+      <a href="#stack"><span>Tech stack</span><span>§04</span></a>
+      <a href="#proj"><span>Projects</span><span>§05</span></a>
+      <a href="#cred"><span>Credentials</span><span>§06</span></a>
     </div>
   </aside>
 
@@ -216,30 +217,31 @@
       <div class="job">
         <div class="h"><h3>Cloud Platform Engineer</h3><div class="date">2022-06 → present</div></div>
         <div class="org">Tatum.io · Blockchain-as-a-Service</div>
-<p class="intro">Co-owner of the chain RPC infrastructure surface — node fleets, routing, observability, GitOps.</p>        <ul>
-          <li><span class="badge">scale</span>Operate 50+ blockchain node fleets — Polygon, Ethereum, Bitcoin, Solana, BSC, Cosmos — across GKE in two GCP regions and OVH bare-metal via Ansible/Docker.</li>
-          <li><span class="badge">routing</span>Contributed to migration of platform-API and chain-RPC admission from nginx-Lua to Envoy Gateway (Gateway API HTTPRoute + SecurityPolicy + extAuth), preserving SLO budget through cutover.</li>
-          <li><span class="badge">gitops</span>Authored progressive multi-region rollout patterns on ArgoCD ApplicationSets (RollingSync, ignoreDifferences, branch retargeting) and the runbooks for their failure modes.</li>
-          <li><span class="badge">discovery</span>Designed Consul-based unified service discovery across K8s, Nomad, and bare-metal — 60 members, 200+ RPC/WS endpoints.</li>
-          <li><span class="badge">tools</span>Built the internal tooling layer: vitals snapshot CLI, dashboards-as-code workflow, ZFS-snapshot rollback for chain upgrades, MR-review knowledge base.</li>
+<p class="intro">Co-owner of the production RPC platform: node fleets, routing, observability, GitOps, on-call.</p>        <ul>
+          <li><span class="badge">scale</span>Operate 50+ blockchain node fleets (Polygon, Ethereum, Bitcoin, Solana, BSC, Cosmos) on Kubernetes and bare metal, full lifecycle from rollout to incident response.</li>
+          <li><span class="badge">routing</span>Contributed to moving platform-API and chain-RPC admission from nginx-Lua to Envoy Gateway (Gateway API, extAuth) with the SLO budget intact through cutover.</li>
+          <li><span class="badge">gitops</span>Authored the progressive multi-region rollout patterns on ArgoCD ApplicationSets, and the runbooks for their failure modes.</li>
+          <li><span class="badge">discovery</span>Designed unified service discovery (Consul) across Kubernetes, Nomad, and bare metal: 60 members, 200+ RPC/WS endpoints.</li>
+          <li><span class="badge">upstream</span>Chase production bugs down into the chain clients themselves and fix them upstream: Erigon PR #22877 (non-deterministic eth_estimateGas, a cancellation race on a shared EVM).</li>
+          <li><span class="badge">tools</span>Built the internal tooling layer: vitals snapshot CLI, dashboards-as-code, ZFS-snapshot rollback for chain upgrades, MR-review knowledge base.</li>
         </ul>
       </div>
       <div class="job">
         <div class="h"><h3>Senior DevOps Engineer</h3><div class="date">2021-02 → 2022-05</div></div>
         <div class="org">BlueEHR · Healthcare EHR</div>
-<p class="intro">Sole DevOps engineer. Took the platform from no-CI-no-monitoring to a working IaC and observability foundation. AWS-native stack.</p>        <ul>
+<p class="intro">Sole DevOps engineer on an AWS-native stack. Took the platform from no CI and no monitoring to a working IaC and observability foundation.</p>        <ul>
           <li><span class="badge">ci/cd</span>HA Jenkins on Kubernetes via JCasC; Gitflow, peer review, and IaC introduced as engineering practice.</li>
-          <li><span class="badge">o11y</span>Prometheus + Grafana + Loki — first real observability the team had.</li>
+          <li><span class="badge">o11y</span>Prometheus, Grafana, and Loki: the first real observability the team had.</li>
         </ul>
       </div>
       <div class="job">
         <div class="h"><h3>Software / Infrastructure Engineer</h3><div class="date">2020-01 → 2021-02</div></div>
         <div class="org">Freelance · short-term engagements</div>
-<p class="intro">Short-term contract engagements across cloud and DevOps work — exploratory period between full-time roles.</p>      </div>
+<p class="intro">Short-term cloud and DevOps contract engagements.</p>      </div>
       <div class="job">
         <div class="h"><h3>DevOps Engineer</h3><div class="date">2019-07 → 2020-01</div></div>
         <div class="org">InfraCloud Technologies · Consulting</div>
-<p class="intro">None</p>        <ul>
+        <ul>
           <li><span class="badge">chaos</span>Resiliency testing with chaos-toolkit; Consul KV sidecar POC for hot-reload configuration.</li>
           <li><span class="badge">k8s</span>Python tooling against the Kubernetes API for cluster-component health verification on deploy.</li>
         </ul>
@@ -247,11 +249,25 @@
       <div class="job">
         <div class="h"><h3>DevOps Engineer</h3><div class="date">2016-08 → 2019-06</div></div>
         <div class="org">Impelsys India</div>
-<p class="intro">Part of the team introducing DevOps practices org-wide. Jenkins/Groovy, Docker, Kubernetes, AWS, CloudFormation. Owned critical CI/CD migrations end-to-end.</p>      </div>
+<p class="intro">Part of the team that introduced DevOps practices org-wide: containerized legacy Java applications onto Kubernetes, built the shared Jenkins pipeline platform, and owned the CI/CD migrations end to end.</p>      </div>
       <div class="job">
         <div class="h"><h3>Software Engineer</h3><div class="date">2015-10 → 2016-07</div></div>
         <div class="org">Impelsys India</div>
-<p class="intro">Built <a href="https://www.ezmarc.com/">ezmarc.com</a> with a teammate — a Python/Flask API converting book metadata to MARC records.</p>      </div>
+<p class="intro">Built <a href="https://www.ezmarc.com/">ezmarc.com</a> with a teammate: a Python/Flask API converting book metadata to MARC records.</p>      </div>
+    </section>
+
+    <section id="oss">
+      <h2>Open source</h2>
+      <div class="job">
+        <div class="h"><h3><a href="https://github.com/erigontech/erigon/pull/22877">Erigon #22877</a> · Fix non-deterministic eth_estimateGas</h3><div class="date">2026 · merged</div></div>
+        <div class="org">Go · concurrency · EVM</div>
+        <p class="intro">A watcher goroutine could cancel the shared EVM after its own probe finished, aborting the next probe with err == nil, so the gas binary search converged below the true minimum. Replaced it with context.AfterFunc plus a joined stop(); added a 200-call determinism test. <a href="https://cshintov.github.io/writeups/erigon-estimategas-fix/">Writeup →</a></p>
+      </div>
+      <div class="job">
+        <div class="h"><h3><a href="https://github.com/sgl-project/sglang/pull/36649">SGLang #36649</a> · Enable trtllm-gen sparse decode on GB10 / DGX Spark</h3><div class="date">2026 · merged</div></div>
+        <div class="org">CUDA · PyTorch · inference</div>
+        <p class="intro">The sparse-attention decode gate excluded sm_121, so GB10 fell to a fallback kernel that aborted at CUDA graph capture and the model could not serve. Widened the gate; verified on 2x DGX Spark serving Qwen3.8-Flash-Next. <a href="https://cshintov.github.io/writeups/sglang-sm121-sparse-decode/">Writeup →</a></p>
+      </div>
     </section>
 
     <section id="stack">
@@ -272,10 +288,10 @@
       <h2>Projects</h2>
       <div class="proj">
         <div class="meta">2015 · Python / Flask / MARC</div>
-        <div><h4><a href="https://www.ezmarc.com/">ezmarc.com</a></h4><p>Co-designed and shipped as a fresher — a Python API converting book metadata into MARC library records.</p></div>
+        <div><h4><a href="https://www.ezmarc.com/">ezmarc.com</a></h4><p>Co-designed and shipped as a fresher: a Python API converting book metadata into MARC library records.</p></div>
       </div>
       <div class="proj">
-        <div class="meta">2025— · Claude Code skills, memory systems, ft bookmarks classifier</div>
+        <div class="meta">2025 → · Claude Code skills, memory systems, ft bookmarks classifier</div>
         <div><h4>LLM-assisted internal tooling</h4><p>Custom skills and memory persistence for a working developer; X/Twitter bookmarks classifier (<code>ft</code>) for personal knowledge management.</p></div>
       </div>
     </section>
