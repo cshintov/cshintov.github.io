@@ -1,0 +1,47 @@
+{#- writeups index → /writeups/index.html -#}
+{% import "_chrome.html.j2" as chrome with context %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Writeups · {{ person.name }}</title>
+<meta name="description" content="Technical writeups by {{ person.name }}: merged upstream fixes, the bug, the mechanism, the fix.">
+<link rel="canonical" href="{{ site.base }}/writeups/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Writeups · {{ person.name }}">
+<meta property="og:description" content="Merged upstream fixes, explained: the bug, the mechanism, the fix.">
+<meta property="og:url" content="{{ site.base }}/writeups/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="{{ site.twitter }}">
+<style>
+{% include "_site.css" %}
+.head{padding:56px 0 10px}
+.head h1{font-family:var(--disp);font-weight:800;letter-spacing:-.03em;line-height:1;font-size:clamp(40px,9vw,64px);margin:0 0 14px}
+.head p{color:var(--soft);font-size:18px;max-width:52ch;margin:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  {{ chrome.header("writeups") }}
+
+  <section class="head">
+    <h1>Writeups</h1>
+    <p>Merged upstream fixes, explained: the puzzling symptom, the mechanism, the fix, and why it matters.</p>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>All posts</h2>
+      <span class="count">{{ writeups|length }} post{% if writeups|length != 1 %}s{% endif %}</span>
+    </div>
+    <div class="feed">
+      {% for w in writeups %}{{ chrome.post_row(w) }}
+      {% endfor %}
+    </div>
+  </section>
+
+  {{ chrome.footer() }}
+</div>
+</body>
+</html>

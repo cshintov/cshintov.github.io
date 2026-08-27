@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shinto C V</title>
-<meta name="description" content="Senior Platform Engineer, 10 years in production infrastructure. Kubernetes, bare metal, GitOps, SRE. Specialized in blockchain RPC. Writeups on merged upstream fixes.">
-<link rel="canonical" href="https://cshintov.github.io/">
-<meta property="og:type" content="website">
+<title>Resume · Shinto C V</title>
+<meta name="description" content="10 years in production infrastructure. Specialized in operating high-availability blockchain RPC platforms across Kubernetes and bare metal, with end-to-end ownership from GitOps and automation through observability and reliability.
+">
+<link rel="canonical" href="https://cshintov.github.io/resume/">
+<meta property="og:type" content="profile">
 <meta property="og:title" content="Shinto C V · Senior Platform Engineer">
-<meta property="og:description" content="Senior Platform Engineer, 10 years in production infrastructure. Kubernetes, bare metal, GitOps, SRE. Specialized in blockchain RPC. Writeups on merged upstream fixes.">
-<meta property="og:url" content="https://cshintov.github.io/">
+<meta property="og:description" content="10 years in production infrastructure. Specialized in operating high-availability blockchain RPC platforms across Kubernetes and bare metal, with end-to-end ownership from GitOps and automation through observability and reliability.
+">
+<meta property="og:url" content="https://cshintov.github.io/resume/">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:creator" content="@codengod">
 <style>
 /* Shared site system: tokens, chrome (header/footer/toggle), type. Included by home, writeups, resume shells. */
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..48,600;12..48,700;12..48,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -92,96 +93,78 @@ footer.site a{color:var(--soft)} footer.site a:hover{color:var(--gold)}
   border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font-size:15px;box-shadow:var(--shadow)}
 .toggle:hover{border-color:var(--gold)}
 @media(max-width:520px){.toggle{display:none}}
-@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}.hero{padding:64px 0 30px}
-.hero .eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.06em;color:var(--gold);text-transform:uppercase;margin-bottom:20px}
-h1.name{font-family:var(--disp);font-weight:800;letter-spacing:-.03em;line-height:1;font-size:clamp(46px,11vw,84px);margin:0 0 24px;text-wrap:balance}
-.identity{font-size:clamp(19px,3vw,23px);line-height:1.5;color:var(--ink);max-width:36ch;margin:0 0 8px;font-weight:400}
-.identity b{font-weight:600}
-.identity .g{color:var(--gold-2);border-bottom:1.5px solid color-mix(in oklab,var(--gold) 40%,transparent)}
-.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
-.links a{font-family:var(--mono);font-size:13.5px;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 15px;background:var(--panel);transition:border-color .15s,transform .1s}
-.links a:hover{border-color:var(--gold);transform:translateY(-1px)}
-.links a .ar{color:var(--faint)}
-.band{margin:40px 0 12px;border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--shadow);padding:30px 28px;display:flex;justify-content:space-between;align-items:center;gap:22px;flex-wrap:wrap}
-.band .l h3{font-family:var(--disp);font-weight:700;font-size:23px;margin:0 0 6px}
-.band .l p{margin:0;color:var(--soft);font-size:15px;max-width:58ch}
-.band .r{display:flex;gap:10px;flex-wrap:wrap}
-.band .btn{font-family:var(--mono);font-size:13.5px;padding:11px 17px;border-radius:11px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);white-space:nowrap;transition:border-color .15s}
-.band .btn.primary{background:var(--gold);color:#141414;border-color:var(--gold);font-weight:600}
-.band .btn:hover{border-color:var(--gold)}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}html,body{height:100%}
+body{display:flex;flex-direction:column}
+.wrap.top{flex:0 0 auto;width:100%}
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 0 14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{appearance:none;background:var(--panel);border:1px solid var(--line);color:var(--ink);
+  padding:7px 15px;border-radius:999px;font-family:var(--mono);font-size:12.5px;cursor:pointer;transition:all .15s}
+.tabs button:hover{border-color:var(--gold)}
+.tabs button.active{background:var(--gold);border-color:var(--gold);color:#141414;font-weight:600}
+.actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.actions a{font-family:var(--mono);font-size:12px;color:var(--soft);padding:7px 12px;border:1px solid var(--line);border-radius:999px;white-space:nowrap;transition:all .15s}
+.actions a:hover{color:var(--ink);border-color:var(--gold)}
+.hint{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+main{flex:1 1 auto;position:relative;min-height:70vh;border-top:1px solid var(--line)}
+iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:#fff}
+iframe.active{display:block}
+@media(max-width:520px){.actions{margin-left:0}.hint{display:none}}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap top">
   <button class="toggle" id="themeBtn" aria-label="Toggle theme">◐</button>
 <header class="site">
   <a class="brand" href="/">Shinto C V<span class="dot">.</span></a>
   <nav class="top">
     <a href="/writeups/">writeups</a>
-    <a href="/resume/">resume</a>
+    <a href="/resume/" class="on">resume</a>
     <a href="https://github.com/cshintov" target="_blank" rel="noopener">github</a>
   </nav>
 </header>
-
-  <section class="hero">
-    <div class="eyebrow">Senior Platform Engineer · 10 years in production infrastructure</div>
-    <h1 class="name">Shinto C V</h1>
-    <p class="identity">I build and operate production infrastructure on <b>Kubernetes and bare metal</b>. My deep domain is high-availability blockchain RPC, and I go all the way down into the engines: <span class="g">execution clients, LLM inference servers, and the systems bugs that hide in both.</span>
-</p>
-    <div class="links">
-      <a href="https://github.com/cshintov" target="_blank" rel="noopener">github.com/cshintov <span class="ar">↗</span></a>
-      <a href="https://www.linkedin.com/in/shinto-cv/" target="_blank" rel="noopener">linkedin/shinto-cv <span class="ar">↗</span></a>
-      <a href="mailto:cshintov@gmail.com">cshintov@gmail.com</a>
-    </div>
-  </section>
-
-  <section class="sec" id="writeups">
-    <div class="sec-head">
-      <h2>Writeups</h2>
-      <span class="count">2 posts</span>
-    </div>
-    <div class="feed">
-<a class="post" style="--accent:var(--sglang)" href="/writeups/sglang-sm121-sparse-decode/">
-  <div class="meta">
-    <span class="chip">SGLang</span><span class="sep">·</span>
-    <span>CUDA · GB10</span><span class="sep">·</span>
-    <span>Aug 2026</span><span class="sep">·</span>
-    <span>PR #36649</span>
+  <div class="bar">
+    <nav class="tabs">
+<button data-src="/variants/engineering-brief.html?v=1787831545" class="active">Blockchain</button>
+<button data-src="/variants/engineering-brief-platform.html?v=1787831545">Platform / SRE</button>
+    </nav>
+    <span class="hint">1 / 2 to switch</span>
+    <div class="actions">
+      <a id="open-tab" href="/variants/engineering-brief.html" target="_blank" rel="noopener">↗ open</a>
+<a href="/variants/pdf/engineering-brief.pdf" target="_blank">↓ Blockchain PDF</a><a href="/variants/pdf/engineering-brief-platform.pdf" target="_blank">↓ Platform / SRE PDF</a>    </div>
   </div>
-  <h3>New chip, new model, and a server that won't start.</h3>
-  <p class="dek">A stale hardware gate locked NVIDIA's GB10 (DGX Spark) out of SGLang's fast sparse-decode kernel and crashed the server on startup. The fix is one line.</p>
-  <span class="go">Read the writeup →</span>
-</a>
-<a class="post" style="--accent:var(--erigon)" href="/writeups/erigon-estimategas-fix/">
-  <div class="meta">
-    <span class="chip">Erigon</span><span class="sep">·</span>
-    <span>Go · concurrency</span><span class="sep">·</span>
-    <span>Aug 2026</span><span class="sep">·</span>
-    <span>PR #22877</span>
-  </div>
-  <h3>Same call, different gas, every time.</h3>
-  <p class="dek">A cancellation race on a shared EVM made <code>eth_estimateGas</code> non-deterministic. A leftover goroutine, cancelling the wrong request, quietly turned a failure into a success.</p>
-  <span class="go">Read the writeup →</span>
-</a>
-    </div>
-  </section>
+</div>
 
-  <section class="sec" id="resume">
-    <div class="sec-head"><h2>Resume</h2></div>
-    <div class="band">
-      <div class="l">
-        <h3>Senior Platform Engineer</h3>
-        <p>10 years in production infrastructure. Specialized in operating high-availability blockchain RPC platforms across Kubernetes and bare metal, with end-to-end ownership from GitOps and automation through observability and reliability.
-</p>
-      </div>
-      <div class="r">
-        <a class="btn primary" href="/resume/">Read resume</a>
-        <a class="btn" href="/variants/pdf/engineering-brief.pdf">PDF ↓</a>
-      </div>
-    </div>
-  </section>
+<main>
+<iframe id="f-engineering-brief" src="/variants/engineering-brief.html?v=1787831545" class="active" title="Blockchain"></iframe>
+<iframe id="f-engineering-brief-platform" data-src="/variants/engineering-brief-platform.html?v=1787831545" title="Platform / SRE"></iframe>
+</main>
 
-  <footer class="site">
+<script>
+  const allTabs = document.querySelectorAll('nav.tabs button');
+  const frames = document.querySelectorAll('main iframe');
+  const openTab = document.getElementById('open-tab');
+  function activate(src) {
+    const bareKey = src.replace(/\?.*$/, '').replace('/variants/', '').replace('.html', '');
+    allTabs.forEach(b => b.classList.toggle('active', b.dataset.src === src));
+    frames.forEach(fr => {
+      const want = (fr.id === 'f-' + bareKey);
+      if (want && !fr.src) fr.src = fr.dataset.src || src;
+      fr.classList.toggle('active', want);
+    });
+    openTab.href = src;
+    history.replaceState(null, '', '#' + bareKey);
+  }
+  allTabs.forEach(b => b.addEventListener('click', () => activate(b.dataset.src)));
+  window.addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const i = parseInt(e.key, 10);
+    if (i >= 1 && i <= allTabs.length) { e.preventDefault(); activate(allTabs[i-1].dataset.src); }
+  });
+  const hash = location.hash.replace('#','');
+  if (hash) { const m = Array.from(allTabs).find(b => b.dataset.src.includes(hash)); if (m) activate(m.dataset.src); }
+</script>
+<footer class="site">
   <span>Kerala, India · remote</span>
   <span>Built from data. <a href="https://github.com/cshintov/cshintov.github.io" target="_blank" rel="noopener">source ↗</a></span>
 </footer>
@@ -193,6 +176,5 @@ h1.name{font-family:var(--disp);font-weight:800;letter-spacing:-.03em;line-heigh
   b.addEventListener('click',function(){root.setAttribute('data-theme',cur()==='dark'?'light':'dark');});
 })();
 </script>
-</div>
 </body>
 </html>

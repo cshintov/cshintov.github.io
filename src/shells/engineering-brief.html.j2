@@ -8,12 +8,13 @@
 <meta charset="utf-8">
 <title>{{ person.name }} — {% if framing == "platform" %}Platform / SRE {% endif %}Engineering Brief</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+  /* Screen palette matches the site system (_site.css, light). Print rules below are unchanged. */
   :root{
-    --bg:#fafaf9; --panel:#fff; --ink:#0f172a; --muted:#64748b;
-    --rule:#e2e8f0; --accent:#0f766e; --accent-soft:#ccfbf1; --warn:#c2410c;
-    --sans:'Inter',system-ui,sans-serif;
+    --bg:#faf8f4; --panel:#fffdf9; --ink:#1a1c1e; --muted:#5c626b;
+    --rule:#e5e0d5; --accent:#8a6216; --accent-soft:#f3e7c9; --warn:#c2410c;
+    --sans:'IBM Plex Sans',system-ui,sans-serif;
     --mono:'JetBrains Mono',ui-monospace,monospace;
   }
   *{box-sizing:border-box}

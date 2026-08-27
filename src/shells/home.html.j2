@@ -1,0 +1,81 @@
+{#- home: identity + writeups feed + resume band → /index.html -#}
+{% import "_chrome.html.j2" as chrome with context %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ person.name }}</title>
+<meta name="description" content="{{ site.tagline }}">
+<link rel="canonical" href="{{ site.base }}/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ person.name }} · {{ site.role_short }}">
+<meta property="og:description" content="{{ site.tagline }}">
+<meta property="og:url" content="{{ site.base }}/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="{{ site.twitter }}">
+<style>
+{% include "_site.css" %}
+.hero{padding:64px 0 30px}
+.hero .eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.06em;color:var(--gold);text-transform:uppercase;margin-bottom:20px}
+h1.name{font-family:var(--disp);font-weight:800;letter-spacing:-.03em;line-height:1;font-size:clamp(46px,11vw,84px);margin:0 0 24px;text-wrap:balance}
+.identity{font-size:clamp(19px,3vw,23px);line-height:1.5;color:var(--ink);max-width:36ch;margin:0 0 8px;font-weight:400}
+.identity b{font-weight:600}
+.identity .g{color:var(--gold-2);border-bottom:1.5px solid color-mix(in oklab,var(--gold) 40%,transparent)}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.links a{font-family:var(--mono);font-size:13.5px;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 15px;background:var(--panel);transition:border-color .15s,transform .1s}
+.links a:hover{border-color:var(--gold);transform:translateY(-1px)}
+.links a .ar{color:var(--faint)}
+.band{margin:40px 0 12px;border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--shadow);padding:30px 28px;display:flex;justify-content:space-between;align-items:center;gap:22px;flex-wrap:wrap}
+.band .l h3{font-family:var(--disp);font-weight:700;font-size:23px;margin:0 0 6px}
+.band .l p{margin:0;color:var(--soft);font-size:15px;max-width:58ch}
+.band .r{display:flex;gap:10px;flex-wrap:wrap}
+.band .btn{font-family:var(--mono);font-size:13.5px;padding:11px 17px;border-radius:11px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);white-space:nowrap;transition:border-color .15s}
+.band .btn.primary{background:var(--gold);color:#141414;border-color:var(--gold);font-weight:600}
+.band .btn:hover{border-color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  {{ chrome.header("home") }}
+
+  <section class="hero">
+    <div class="eyebrow">{{ site.eyebrow }}</div>
+    <h1 class="name">{{ person.name }}</h1>
+    <p class="identity">{{ site.identity | safe }}</p>
+    <div class="links">
+      <a href="{{ person.github_url }}" target="_blank" rel="noopener">{{ person.github_label }} <span class="ar">↗</span></a>
+      <a href="{{ person.linkedin_url }}" target="_blank" rel="noopener">{{ person.linkedin_label }} <span class="ar">↗</span></a>
+      <a href="mailto:{{ person.email }}">{{ person.email }}</a>
+    </div>
+  </section>
+
+  <section class="sec" id="writeups">
+    <div class="sec-head">
+      <h2>Writeups</h2>
+      <span class="count">{{ writeups|length }} post{% if writeups|length != 1 %}s{% endif %}</span>
+    </div>
+    <div class="feed">
+      {% for w in writeups %}{{ chrome.post_row(w) }}
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="sec" id="resume">
+    <div class="sec-head"><h2>Resume</h2></div>
+    <div class="band">
+      <div class="l">
+        <h3>{{ site.role_short }}</h3>
+        <p>{{ site.resume_blurb }}</p>
+      </div>
+      <div class="r">
+        <a class="btn primary" href="/resume/">Read resume</a>
+        <a class="btn" href="/variants/pdf/{{ targets[0].out | replace('.html','.pdf') }}">PDF ↓</a>
+      </div>
+    </div>
+  </section>
+
+  {{ chrome.footer() }}
+</div>
+</body>
+</html>

@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shinto C V</title>
-<meta name="description" content="Senior Platform Engineer, 10 years in production infrastructure. Kubernetes, bare metal, GitOps, SRE. Specialized in blockchain RPC. Writeups on merged upstream fixes.">
-<link rel="canonical" href="https://cshintov.github.io/">
+<title>Writeups · Shinto C V</title>
+<meta name="description" content="Technical writeups by Shinto C V: merged upstream fixes, the bug, the mechanism, the fix.">
+<link rel="canonical" href="https://cshintov.github.io/writeups/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Shinto C V · Senior Platform Engineer">
-<meta property="og:description" content="Senior Platform Engineer, 10 years in production infrastructure. Kubernetes, bare metal, GitOps, SRE. Specialized in blockchain RPC. Writeups on merged upstream fixes.">
-<meta property="og:url" content="https://cshintov.github.io/">
+<meta property="og:title" content="Writeups · Shinto C V">
+<meta property="og:description" content="Merged upstream fixes, explained: the bug, the mechanism, the fix.">
+<meta property="og:url" content="https://cshintov.github.io/writeups/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:creator" content="@codengod">
 <style>
@@ -92,23 +92,9 @@ footer.site a{color:var(--soft)} footer.site a:hover{color:var(--gold)}
   border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font-size:15px;box-shadow:var(--shadow)}
 .toggle:hover{border-color:var(--gold)}
 @media(max-width:520px){.toggle{display:none}}
-@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}.hero{padding:64px 0 30px}
-.hero .eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.06em;color:var(--gold);text-transform:uppercase;margin-bottom:20px}
-h1.name{font-family:var(--disp);font-weight:800;letter-spacing:-.03em;line-height:1;font-size:clamp(46px,11vw,84px);margin:0 0 24px;text-wrap:balance}
-.identity{font-size:clamp(19px,3vw,23px);line-height:1.5;color:var(--ink);max-width:36ch;margin:0 0 8px;font-weight:400}
-.identity b{font-weight:600}
-.identity .g{color:var(--gold-2);border-bottom:1.5px solid color-mix(in oklab,var(--gold) 40%,transparent)}
-.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
-.links a{font-family:var(--mono);font-size:13.5px;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 15px;background:var(--panel);transition:border-color .15s,transform .1s}
-.links a:hover{border-color:var(--gold);transform:translateY(-1px)}
-.links a .ar{color:var(--faint)}
-.band{margin:40px 0 12px;border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--shadow);padding:30px 28px;display:flex;justify-content:space-between;align-items:center;gap:22px;flex-wrap:wrap}
-.band .l h3{font-family:var(--disp);font-weight:700;font-size:23px;margin:0 0 6px}
-.band .l p{margin:0;color:var(--soft);font-size:15px;max-width:58ch}
-.band .r{display:flex;gap:10px;flex-wrap:wrap}
-.band .btn{font-family:var(--mono);font-size:13.5px;padding:11px 17px;border-radius:11px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);white-space:nowrap;transition:border-color .15s}
-.band .btn.primary{background:var(--gold);color:#141414;border-color:var(--gold);font-weight:600}
-.band .btn:hover{border-color:var(--gold)}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}.head{padding:56px 0 10px}
+.head h1{font-family:var(--disp);font-weight:800;letter-spacing:-.03em;line-height:1;font-size:clamp(40px,9vw,64px);margin:0 0 14px}
+.head p{color:var(--soft);font-size:18px;max-width:52ch;margin:0}
 </style>
 </head>
 <body>
@@ -117,27 +103,20 @@ h1.name{font-family:var(--disp);font-weight:800;letter-spacing:-.03em;line-heigh
 <header class="site">
   <a class="brand" href="/">Shinto C V<span class="dot">.</span></a>
   <nav class="top">
-    <a href="/writeups/">writeups</a>
+    <a href="/writeups/" class="on">writeups</a>
     <a href="/resume/">resume</a>
     <a href="https://github.com/cshintov" target="_blank" rel="noopener">github</a>
   </nav>
 </header>
 
-  <section class="hero">
-    <div class="eyebrow">Senior Platform Engineer · 10 years in production infrastructure</div>
-    <h1 class="name">Shinto C V</h1>
-    <p class="identity">I build and operate production infrastructure on <b>Kubernetes and bare metal</b>. My deep domain is high-availability blockchain RPC, and I go all the way down into the engines: <span class="g">execution clients, LLM inference servers, and the systems bugs that hide in both.</span>
-</p>
-    <div class="links">
-      <a href="https://github.com/cshintov" target="_blank" rel="noopener">github.com/cshintov <span class="ar">↗</span></a>
-      <a href="https://www.linkedin.com/in/shinto-cv/" target="_blank" rel="noopener">linkedin/shinto-cv <span class="ar">↗</span></a>
-      <a href="mailto:cshintov@gmail.com">cshintov@gmail.com</a>
-    </div>
+  <section class="head">
+    <h1>Writeups</h1>
+    <p>Merged upstream fixes, explained: the puzzling symptom, the mechanism, the fix, and why it matters.</p>
   </section>
 
-  <section class="sec" id="writeups">
+  <section class="sec">
     <div class="sec-head">
-      <h2>Writeups</h2>
+      <h2>All posts</h2>
       <span class="count">2 posts</span>
     </div>
     <div class="feed">
@@ -163,21 +142,6 @@ h1.name{font-family:var(--disp);font-weight:800;letter-spacing:-.03em;line-heigh
   <p class="dek">A cancellation race on a shared EVM made <code>eth_estimateGas</code> non-deterministic. A leftover goroutine, cancelling the wrong request, quietly turned a failure into a success.</p>
   <span class="go">Read the writeup →</span>
 </a>
-    </div>
-  </section>
-
-  <section class="sec" id="resume">
-    <div class="sec-head"><h2>Resume</h2></div>
-    <div class="band">
-      <div class="l">
-        <h3>Senior Platform Engineer</h3>
-        <p>10 years in production infrastructure. Specialized in operating high-availability blockchain RPC platforms across Kubernetes and bare metal, with end-to-end ownership from GitOps and automation through observability and reliability.
-</p>
-      </div>
-      <div class="r">
-        <a class="btn primary" href="/resume/">Read resume</a>
-        <a class="btn" href="/variants/pdf/engineering-brief.pdf">PDF ↓</a>
-      </div>
     </div>
   </section>
 

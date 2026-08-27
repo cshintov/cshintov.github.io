@@ -1,0 +1,84 @@
+{#- resume switcher (Blockchain / Platform tabs) in the site system → /resume/index.html. Frames /variants/<out>. -#}
+{% import "_chrome.html.j2" as chrome with context %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resume · {{ person.name }}</title>
+<meta name="description" content="{{ site.resume_blurb }}">
+<link rel="canonical" href="{{ site.base }}/resume/">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="{{ person.name }} · {{ site.role_short }}">
+<meta property="og:description" content="{{ site.resume_blurb }}">
+<meta property="og:url" content="{{ site.base }}/resume/">
+<meta name="twitter:card" content="summary">
+<style>
+{% include "_site.css" %}
+html,body{height:100%}
+body{display:flex;flex-direction:column}
+.wrap.top{flex:0 0 auto;width:100%}
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 0 14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{appearance:none;background:var(--panel);border:1px solid var(--line);color:var(--ink);
+  padding:7px 15px;border-radius:999px;font-family:var(--mono);font-size:12.5px;cursor:pointer;transition:all .15s}
+.tabs button:hover{border-color:var(--gold)}
+.tabs button.active{background:var(--gold);border-color:var(--gold);color:#141414;font-weight:600}
+.actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.actions a{font-family:var(--mono);font-size:12px;color:var(--soft);padding:7px 12px;border:1px solid var(--line);border-radius:999px;white-space:nowrap;transition:all .15s}
+.actions a:hover{color:var(--ink);border-color:var(--gold)}
+.hint{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+main{flex:1 1 auto;position:relative;min-height:70vh;border-top:1px solid var(--line)}
+iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:#fff}
+iframe.active{display:block}
+@media(max-width:520px){.actions{margin-left:0}.hint{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap top">
+  {{ chrome.header("resume") }}
+  <div class="bar">
+    <nav class="tabs">
+      {% for item in targets if item.public %}<button data-src="/variants/{{ item.out }}?v={{ cache_bust }}"{% if loop.first %} class="active"{% endif %}>{{ item.label }}</button>
+      {% endfor %}
+    </nav>
+    <span class="hint">1 / 2 to switch</span>
+    <div class="actions">
+      <a id="open-tab" href="/variants/{{ default_target }}" target="_blank" rel="noopener">↗ open</a>
+      {% for item in targets if item.public %}<a href="/variants/pdf/{{ item.out | replace('.html','.pdf') }}" target="_blank">↓ {{ item.label }} PDF</a>{% endfor %}
+    </div>
+  </div>
+</div>
+
+<main>
+  {% for item in targets if item.public %}<iframe id="f-{{ item.out | replace('.html','') }}"{% if loop.first %} src="/variants/{{ item.out }}?v={{ cache_bust }}" class="active"{% else %} data-src="/variants/{{ item.out }}?v={{ cache_bust }}"{% endif %} title="{{ item.label }}"></iframe>
+  {% endfor %}
+</main>
+
+<script>
+  const allTabs = document.querySelectorAll('nav.tabs button');
+  const frames = document.querySelectorAll('main iframe');
+  const openTab = document.getElementById('open-tab');
+  function activate(src) {
+    const bareKey = src.replace(/\?.*$/, '').replace('/variants/', '').replace('.html', '');
+    allTabs.forEach(b => b.classList.toggle('active', b.dataset.src === src));
+    frames.forEach(fr => {
+      const want = (fr.id === 'f-' + bareKey);
+      if (want && !fr.src) fr.src = fr.dataset.src || src;
+      fr.classList.toggle('active', want);
+    });
+    openTab.href = src;
+    history.replaceState(null, '', '#' + bareKey);
+  }
+  allTabs.forEach(b => b.addEventListener('click', () => activate(b.dataset.src)));
+  window.addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const i = parseInt(e.key, 10);
+    if (i >= 1 && i <= allTabs.length) { e.preventDefault(); activate(allTabs[i-1].dataset.src); }
+  });
+  const hash = location.hash.replace('#','');
+  if (hash) { const m = Array.from(allTabs).find(b => b.dataset.src.includes(hash)); if (m) activate(m.dataset.src); }
+</script>
+{{ chrome.footer() }}
+</body>
+</html>

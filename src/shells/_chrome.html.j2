@@ -1,0 +1,41 @@
+{#- Shared header / footer / theme toggle. Set `page` = home | writeups | resume before including. -#}
+{%- macro header(page) -%}
+<button class="toggle" id="themeBtn" aria-label="Toggle theme">◐</button>
+<header class="site">
+  <a class="brand" href="/">{{ person.name }}<span class="dot">.</span></a>
+  <nav class="top">
+    <a href="/writeups/"{% if page == "writeups" %} class="on"{% endif %}>writeups</a>
+    <a href="/resume/"{% if page == "resume" %} class="on"{% endif %}>resume</a>
+    <a href="{{ person.github_url }}" target="_blank" rel="noopener">github</a>
+  </nav>
+</header>
+{%- endmacro -%}
+
+{%- macro footer() -%}
+<footer class="site">
+  <span>{{ person.location }}</span>
+  <span>Built from data. <a href="https://github.com/cshintov/cshintov.github.io" target="_blank" rel="noopener">source ↗</a></span>
+</footer>
+<script>
+(function(){
+  var b=document.getElementById('themeBtn'),root=document.documentElement;
+  if(!b)return;
+  function cur(){var t=root.getAttribute('data-theme');return t||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');}
+  b.addEventListener('click',function(){root.setAttribute('data-theme',cur()==='dark'?'light':'dark');});
+})();
+</script>
+{%- endmacro -%}
+
+{%- macro post_row(w) -%}
+<a class="post" style="--accent:var(--{{ w.accent }})" href="/writeups/{{ w.slug }}/">
+  <div class="meta">
+    <span class="chip">{{ w.project }}</span><span class="sep">·</span>
+    <span>{{ w.tags }}</span><span class="sep">·</span>
+    <span>{{ w.date }}</span><span class="sep">·</span>
+    <span>PR #{{ w.pr }}</span>
+  </div>
+  <h3>{{ w.title }}</h3>
+  <p class="dek">{{ w.dek | safe }}</p>
+  <span class="go">Read the writeup →</span>
+</a>
+{%- endmacro -%}

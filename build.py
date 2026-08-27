@@ -22,6 +22,12 @@ SHELLS = SRC / "shells"
 OUT = ROOT / "variants"
 PDF_OUT = OUT / "pdf"
 
+REDIRECT = (
+    '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
+    '<meta http-equiv="refresh" content="0; url={to}"><link rel="canonical" href="{to}">'
+    '<title>Redirecting</title></head><body><a href="{to}">Moved to {to}</a></body></html>\n'
+)
+
 # Ensure WeasyPrint can find Homebrew's pango/cairo/glib on macOS
 os.environ.setdefault("DYLD_LIBRARY_PATH", "/opt/homebrew/lib")
 os.environ.setdefault("DYLD_FALLBACK_LIBRARY_PATH", "/opt/homebrew/lib")
@@ -90,18 +96,32 @@ def main() -> None:
         rendered.append(out_name)
         print(f"  ✓ {out_name}  ({shell} · {framing})")
 
-    # Index: two-tab switcher (blockchain / platform)
+    # Site pages: home, writeups index, resume switcher. Written to the site root, not variants/.
     cache_bust = str(int(time.time()))
-    index_tpl = env.get_template("index.html.j2")
-    (OUT / "index.html").write_text(index_tpl.render(
+    public_targets = [t for t in data["targets"] if t.get("public")]
+    site_ctx = dict(
         person=data["person"],
-        targets=data["targets"],
-        default_target=data["targets"][0]["out"],
+        site=data["site"],
+        writeups=data["writeups"],
+        targets=public_targets,
+        default_target=public_targets[0]["out"],
         cache_bust=cache_bust,
-    ))
-    print(f"  ✓ index.html  (switcher · {len(data['targets'])} targets)")
+    )
+    site_pages = [
+        ("home.html.j2",           ROOT / "index.html"),
+        ("writeups-index.html.j2", ROOT / "writeups" / "index.html"),
+        ("resume.html.j2",         ROOT / "resume" / "index.html"),
+    ]
+    for shell, dst in site_pages:
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_text(env.get_template(shell).render(**site_ctx))
+        print(f"  ✓ {dst.relative_to(ROOT)}  ({shell})")
 
-    print(f"\nWrote {len(rendered) + 1} files to {OUT.relative_to(ROOT)}/")
+    # Old switcher URL: keep it alive as a redirect to /resume/.
+    (OUT / "index.html").write_text(REDIRECT.format(to="/resume/"))
+    print(f"  ✓ variants/index.html  (redirect → /resume/)")
+
+    print(f"\nWrote {len(rendered) + len(site_pages) + 1} files")
 
     if args.pdf:
         render_pdfs(rendered)
